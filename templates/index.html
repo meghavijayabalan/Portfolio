@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio of Megha Raj V S — Data Scientist & AI Engineer with 1.3+ years of production experience building LLM agents, RAG pipelines, and cloud ETL systems.">
+  <title>Megha Raj V S — Portfolio</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Neural Network Drifting Background Canvas -->
+  <canvas id="neuron-canvas"></canvas>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header__nav">
+      <a href="#" class="logo">
+        MR<span>.</span>
+      </a>
+      
+      <div class="nav-right-container">
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="#hero" class="nav-link">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#journey" class="nav-link">Journey</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+
+        <!-- Dark/Light Theme Switcher Toggle -->
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark and light color themes">
+          <!-- Sun Icon (shown in light mode) -->
+          <svg class="sun-icon" viewBox="0 0 24 24">
+            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.01c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+          </svg>
+          <!-- Moon Icon (shown in dark mode) -->
+          <svg class="moon-icon" viewBox="0 0 24 24">
+            <path d="M12.3 22h-.1c-5.4 0-10-4.6-10-10 0-4.3 2.9-8.1 7.1-9.4.6-.2 1.3.2 1.4.8.2.6-.2 1.3-.8 1.4-3.2.9-5.4 3.9-5.4 7.2 0 4.4 3.6 8 8 8 3.3 0 6.3-2.2 7.2-5.4.2-.6.8-1 1.4-.8.6.2.9.8.8 1.4-.9 4.2-4.7 7.1-9.6 7.2z"/>
+          </svg>
+        </button>
+
+        <button class="nav-toggle" aria-label="Toggle navigation menu" id="nav-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="hero__info-side" data-reveal>
+            <div class="hero__badge">
+              <span>★</span> Data Scientist | AI Developer
+            </div>
+            
+            <h1 class="hero__headline">
+              I turn data into <span>intelligence.</span><br>
+              I turn ideas into <span>impact.</span>
+            </h1>
+            
+            <div class="hero__name-row">
+              <span class="hero__name">{{ profile.name }}</span>
+              <span class="hero__name-divider">—</span>
+              <span class="hero__name-role">Data Scientist &amp; AI Engineer</span>
+            </div>
+            
+            <p class="hero__desc">
+              Building intelligent AI agents, analytics platforms and cloud data pipelines that solve real-world problems and drive measurable business value.
+            </p>
+            
+            <!-- 4-column Services list -->
+            <div class="hero__services">
+              <div class="service-item">
+                <div class="service-item__icon">
+                  <!-- AI Brain Icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                    <path d="M12 6v12"></path>
+                    <path d="M8 10h8"></path>
+                    <path d="M8 14h8"></path>
+                  </svg>
+                </div>
+                <div class="service-item__title">AI & Machine Learning</div>
+              </div>
+              
+              <div class="service-item">
+                <div class="service-item__icon">
+                  <!-- Data Analytics Icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <div class="service-item__title">Data Science & Analytics</div>
+              </div>
+              
+              <div class="service-item">
+                <div class="service-item__icon">
+                  <!-- Cloud engineering Icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                  </svg>
+                </div>
+                <div class="service-item__title">Cloud & Data Engineering</div>
+              </div>
+              
+              <div class="service-item">
+                <div class="service-item__icon">
+                  <!-- Robotics / Agents Icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                    <circle cx="12" cy="5" r="2"></circle>
+                    <path d="M12 7v4"></path>
+                    <line x1="8" y1="16" x2="8.01" y2="16"></line>
+                    <line x1="16" y1="16" x2="16.01" y2="16"></line>
+                  </svg>
+                </div>
+                <div class="service-item__title">AI Agents & Automation</div>
+              </div>
+            </div>
+            
+            <!-- Actions row -->
+            <div class="hero__actions">
+              <a href="#projects" class="btn btn--primary">View My Work &rarr;</a>
+              
+              <a href="#" class="btn btn--secondary" style="display:inline-flex; align-items:center; gap:8px;">
+                Download CV
+                <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;">
+                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+                </svg>
+              </a>
+              
+              <button class="btn-listen" data-read="hero" aria-label="Listen to Introduction" style="padding: 10px 18px;">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                <span class="soundwave"><span></span><span></span><span></span><span></span></span>
+                <span>Listen</span>
+              </button>
+            </div>
+            
+            <!-- Connect Row -->
+            <div class="hero__connect">
+              <div class="hero__connect-title">Connect with me</div>
+              <div class="hero__connect-icons">
+                <a href="{{ profile.linkedin }}" target="_blank" class="social-link" aria-label="LinkedIn">
+                  <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                </a>
+                <a href="{{ profile.github }}" target="_blank" class="social-link" aria-label="GitHub">
+                  <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
+                </a>
+                <a href="mailto:{{ profile.email }}" class="social-link" aria-label="Email">
+                  <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="hero__image-side" data-reveal>
+            <div class="hero__photo-wrapper">
+              <div class="hero__photo-mask">
+                <!-- Single profile picture (red shirt profile_1) -->
+                <img src="{{ url_for('static', filename='images/profile_1.jpeg') }}" alt="{{ profile.name }}">
+              </div>
+              <div class="hero__photo-bg">
+                <svg viewBox="0 0 380 380">
+                  <!-- Orbital rings with node points, responsive in light/dark themes -->
+                  <circle class="orbit-ring orbit-ring--inner" cx="190" cy="190" r="165"/>
+                  <circle class="orbit-ring orbit-ring--outer" cx="190" cy="190" r="182"/>
+                  <circle class="orbit-node" cx="190" cy="8" r="4.5"/>
+                  <circle class="orbit-node" cx="25" cy="190" r="3"/>
+                  <!-- Curved dendritic path waves -->
+                  <path class="dendrite-wave" d="M 190,15 C 295,15 365,85 365,190 C 365,295 285,365 190,365 C 95,365 15,285 15,190 C 15,85 85,15 190,15 Z" />
+                  <path class="dendrite-branch" d="M 15,220 C 100,320 200,220 365,220" />
+                  <path class="dendrite-branch" d="M 10,250 C 90,350 190,250 370,250" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Cards Section below Hero -->
+    <section class="stats-section">
+      <div class="container stats-grid" data-reveal>
+        <div class="stat-card">
+          <div class="stat-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="stat-card__num">3+</div>
+          <div class="stat-card__label">Years</div>
+          <div class="stat-card__sub">Experience</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l-7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <div class="stat-card__num">2</div>
+          <div class="stat-card__label">Years</div>
+          <div class="stat-card__sub">RPA Analyst</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 22h20M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="stat-card__num">1.3+</div>
+          <div class="stat-card__label">Years</div>
+          <div class="stat-card__sub">Data Scientist</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <div class="stat-card__num">10+</div>
+          <div class="stat-card__label">Projects</div>
+          <div class="stat-card__sub">Delivered</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <div class="stat-card__num">15%+</div>
+          <div class="stat-card__label">Business Impact</div>
+          <div class="stat-card__sub">Delivered</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technologies Banner Section -->
+    <section class="tech-banner-section">
+      <div class="container" data-reveal>
+        <div class="tech-banner__title">Technologies I Work With</div>
+        <div class="tech-banner__logos">
+          <!-- Python -->
+          <div class="tech-logo" title="Python">
+            <svg viewBox="0 0 24 24" style="color: #3776AB;"><path fill="currentColor" d="M14.25.18c.9 0 2 .1 2.86.37 1.25.4 2.06 1.25 2.06 2.5v2.7h-2.7V4.5c0-.7-.5-1.2-1.2-1.2h-2.4V1.7c0-.9-.7-1.5-1.6-1.5h-2.5c-.9 0-1.6.7-1.6 1.5v1.6H4.7c-1.25 0-2.06.85-2.06 2.1v2.7h2.7V7c0-.7.5-1.2 1.2-1.2h2.4v1.6c0 .9.7 1.5 1.6 1.5h2.5c.9 0 1.6-.7 1.6-1.5V5.7h2.4v2.5c0 .7-.5 1.2-1.2 1.2h-2.86c-1.25-.1-2.06-.9-2.06-2.1V4.8h-2.7v2.5c0 .9.7 1.6 1.6 1.6h2.5c.9 0 1.6-.7 1.6-1.6V5.7h2.4V8c0 .7-.5 1.2-1.2 1.2H14.2c-.9 0-2-.1-2.86-.37-1.25-.4-2.06-1.25-2.06-2.5V3.6h2.7v1.2c0 .7.5 1.2 1.2 1.2h2.4V4.4c0-.9.7-1.5 1.6-1.5h2.5c.9 0 1.6.7 1.6 1.5v1.6h2.4c1.25 0 2.06-.85 2.06-2.1V1.3c0-.9-.7-1.6-1.6-1.6h-2.5c-.9 0-1.6.7-1.6 1.6V2.9c0 .7-.5 1.2-1.2 1.2h-2.4V2.5c0-.9.7-1.5 1.6-1.5h2.5c.9 0 1.6-.7 1.6-1.5V.18z"/></svg>
+            <span>Python</span>
+          </div>
+          <!-- SQL -->
+          <div class="tech-logo" title="SQL">
+            <svg viewBox="0 0 24 24" style="color: #00758F;"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 1.83-.62 3.51-1.66 4.88l-.44-.42z"/></svg>
+            <span>SQL</span>
+          </div>
+          <!-- AWS -->
+          <div class="tech-logo" title="AWS">
+            <svg viewBox="0 0 24 24" style="color: #FF9900;"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14.5c-.8.8-1.8 1.2-3 1.2-1.5 0-2.8-.7-3.5-1.9L9 16.5c.8 1.5 2.5 2.5 4.5 2.5 1.8 0 3.2-.7 4.2-1.9l-1.2-1.1zm-.8-3.4c.5.5.8 1.2.8 2 0 .8-.3 1.5-.8 2l-1.2-1.1c.3-.3.4-.6.4-.9 0-.3-.1-.6-.4-.9l1.2-1.1zm-4.7-.6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0-2c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4z"/></svg>
+            <span>AWS</span>
+          </div>
+          <!-- MongoDB -->
+          <div class="tech-logo" title="MongoDB">
+            <svg viewBox="0 0 24 24" style="color: #47A248;"><path fill="currentColor" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm1.5 13.5v-2h-3v2h3zm0-3.5v-5h-3v5h3z"/></svg>
+            <span>MongoDB</span>
+          </div>
+          <!-- LangChain -->
+          <div class="tech-logo" title="LangChain">
+            <svg viewBox="0 0 24 24" style="color: #1C3C3A;"><path fill="currentColor" d="M12 2L2 22h20L12 2zm0 4.8L17.5 18H6.5L12 6.8z"/></svg>
+            <span>LangChain</span>
+          </div>
+          <!-- OpenAI -->
+          <div class="tech-logo" title="OpenAI">
+            <svg viewBox="0 0 24 24" style="color: #412991;"><path fill="currentColor" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm1 14h-2v-5h2v5zm0-7h-2V7h2v2z"/></svg>
+            <span>OpenAI</span>
+          </div>
+          <!-- Power BI -->
+          <div class="tech-logo" title="Power BI">
+            <svg viewBox="0 0 24 24" style="color: #F2C811;"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H6v-6h3v6zm5 0h-3V8h3v9zm5 0h-3V5h3v12z"/></svg>
+            <span>Power BI</span>
+          </div>
+          <!-- Docker -->
+          <div class="tech-logo" title="Docker">
+            <svg viewBox="0 0 24 24" style="color: #2496ED;"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+            <span>Docker</span>
+          </div>
+        </div>
+        
+        <!-- Scroll to Explore -->
+        <div class="scroll-indicator">
+          <div class="mouse-icon"></div>
+          <span>Scroll to explore</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+      <div class="container">
+        <div class="about__grid">
+          <div class="about__photo-container" data-reveal>
+            <!-- Custom Styled Frame for Illustrated Workspace Photo -->
+            <div class="about__photo-frame">
+              <img src="{{ url_for('static', filename='images/about_illustration.jpg') }}" alt="Megha Raj V S Illustration at Work" class="about__photo">
+            </div>
+            <div class="about__photo-decorator"></div>
+          </div>
+          
+          <div class="about__details" data-reveal>
+            <div class="section-header-row">
+              <div>
+                <span class="section-eyebrow">About Me</span>
+                <h2 class="section-title">Bridging Data & Cognition</h2>
+              </div>
+              <button class="btn-listen" data-read="about" aria-label="Listen to About section">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                <span class="soundwave"><span></span><span></span><span></span><span></span></span>
+                <span>Listen</span>
+              </button>
+            </div>
+            
+            <div class="about__bio" id="about-bio-text">
+              <p class="about__bio-para">
+                I am a passionate Data Scientist and AI Engineer. With a solid grounding in Digital Image Computing, 
+                my expertise lies in designing deep neural architectures and optimization frameworks. 
+                I specialize in making deep learning more accessible, resource-efficient, and practical for production deployment.
+              </p>
+              <p class="about__bio-para">
+                My career path represents a deliberate transition: starting with Automation (RPA) & Data Analysis, 
+                where I built software robots and optimized backend workflows, and evolving into Deep Learning & Computer Vision, 
+                where I design spatiotemporal neural networks for visual speech recognition (lip-reading) and advanced mathematical 
+                imaging solutions.
+              </p>
+              <p class="about__bio-para">
+                I believe in building clean, standalone, and explainable AI pipelines. Let's build something intelligent!
+              </p>
+            </div>
+            <div class="hero__cta" style="justify-content: flex-start; margin-top: 24px;">
+              <a href="#contact" class="btn btn--primary">Hire Me</a>
+              <a href="#journey" class="btn btn--secondary">Read Journey</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+      <div class="container">
+        <span class="section-eyebrow" style="text-align: center; display: block;">Neural Stack</span>
+        <h2 class="section-title" style="text-align: center;">Expertise & Toolkit</h2>
+        
+        <div class="skills-grid">
+          {% for category, items in skills.items() %}
+          <div class="skill-category" data-reveal>
+            <h3 class="skill-category__title">{{ category }}</h3>
+            <div class="skill-chips">
+              {% for item in items %}
+              <span class="skill-chip">{{ item }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-eyebrow">Select Neurons</span>
+            <h2 class="section-title">Featured Projects</h2>
+          </div>
+          <button class="btn-listen" data-read="projects" aria-label="Listen to Projects overview">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <span class="soundwave"><span></span><span></span><span></span><span></span></span>
+            <span>Listen All</span>
+          </button>
+        </div>
+        
+        <div class="projects-grid">
+          {% for project in projects %}
+          <div class="project-card" data-reveal id="project-card-{{ project.id }}">
+            <div class="project-card__header">
+              <span class="project-card__badge">{{ project.badge }}</span>
+              
+              <!-- Individual Project Speech Button -->
+              <button class="btn-listen btn-listen--small" data-read-project="{{ project.id }}" aria-label="Listen to {{ project.title }}" style="background:none; border:none; color:var(--signal); cursor:pointer;">
+                <svg viewBox="0 0 24 24" style="width:16px; height:16px;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                <span class="soundwave" style="width:12px; height:10px;"><span></span><span></span><span></span><span></span></span>
+              </button>
+            </div>
+            
+            <div class="project-card__content">
+              <h3 class="project-card__title">{{ project.title }}</h3>
+              <p class="project-card__description">{{ project.description }}</p>
+            </div>
+
+            <!-- Expandable Details -->
+            <div class="project-card__details">
+              <div class="project-card__details-inner">
+                <div class="project-card__meta-group">
+                  <div class="project-card__meta-title">Methodology</div>
+                  <div class="project-card__meta-desc">{{ project.methodology }}</div>
+                </div>
+                {% if project.dataset %}
+                <div class="project-card__meta-group">
+                  <div class="project-card__meta-title">Dataset / Test Environment</div>
+                  <div class="project-card__meta-desc">{{ project.dataset }}</div>
+                </div>
+                {% endif %}
+                <div class="project-card__meta-group">
+                  <div class="project-card__meta-title">Metrics & Impact</div>
+                  <div class="project-card__meta-desc">{{ project.metrics }}</div>
+                </div>
+                <div class="project-card__tech">
+                  {% for tech in project.tech_stack %}
+                  <span class="project-card__tech-chip">{{ tech }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="project-card__footer">
+              <button class="btn-toggle-details">
+                <span>View Technical Details</span>
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5H7z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Unified Journey Section (Tabbed Education + Experience) -->
+    <section id="journey" class="career-section">
+      <div class="container">
+
+        <!-- Section header -->
+        <div class="career-header" data-reveal>
+          <span class="section-eyebrow">MY JOURNEY</span>
+          <h2 class="career-headline">From <span class="career-green">Curiosity</span> to <span class="career-green">Impact</span></h2>
+          <p class="career-subtitle">A journey of continuous learning, building meaningful solutions, and turning data into decisions that drive real-world impact.</p>
+          
+          <button class="btn-listen" data-read="journey" aria-label="Listen to Journey section" style="margin-top: 16px;">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <span class="soundwave"><span></span><span></span><span></span><span></span></span>
+            <span>Listen Journey</span>
+          </button>
+        </div>
+
+        <!-- Tab switcher -->
+        <div class="career-tabs" data-reveal>
+          <button class="career-tab career-tab--active" data-tab="experience" id="tab-experience">Experience</button>
+          <button class="career-tab" data-tab="education" id="tab-education">Education & Publications</button>
+        </div>
+
+        <!-- Experience tab panel -->
+        <div class="career-panel career-panel--active" id="panel-experience" data-reveal>
+          <div class="career-block">
+            <div class="career-block__header">
+              <div class="career-block__icon">
+                <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.86.18-1a3 3 0 0 0-6 0c0 .14.11.56.18 1H10C8.9 6 8 6.9 8 8v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-1c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1zm7 15H10V8h10v12z"/></svg>
+              </div>
+              <h3 class="career-block__title">Professional Experience</h3>
+            </div>
+            <div class="career-timeline" id="experience-timeline-text">
+              {% for exp in experience %}
+              <div class="career-row {% if exp.is_current %}career-row--current{% endif %}">
+                <div class="career-row__dot"></div>
+                <div class="career-row__period">{{ exp.period }}</div>
+                <div class="career-row__body">
+                  <div class="career-row__title">{{ exp.role }}</div>
+                  <div class="career-row__company">{{ exp.company }}</div>
+                  <ul class="timeline-list" style="margin-top: 8px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem; list-style-type: disc;">
+                    {% for desc in exp.description %}
+                    <li style="margin-bottom: 6px;">{{ desc }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="career-row__badge">{{ exp.duration }}</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Education & Publications tab panel -->
+        <div class="career-panel" id="panel-education">
+          <div class="career-block">
+            <div class="career-block__header">
+              <div class="career-block__icon">
+                <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+              </div>
+              <h3 class="career-block__title">Education & Publications</h3>
+            </div>
+            
+            <div class="career-timeline" id="education-timeline-text">
+              <!-- Education rows -->
+              {% for edu in education %}
+              <div class="career-row">
+                <div class="career-row__dot"></div>
+                <div class="career-row__period">{{ edu.period }}</div>
+                <div class="career-row__body">
+                  <div class="career-row__title">{{ edu.degree }}</div>
+                  <div class="career-row__inst">{{ edu.institution }}</div>
+                  {% if edu.specialization %}
+                  <div class="career-row__sub" style="margin-top: 4px;">Specialization: {{ edu.specialization }}</div>
+                  {% endif %}
+                  {% if edu.thesis %}
+                  <div class="career-row__desc" style="font-style: italic; margin-top: 4px;">Thesis: {{ edu.thesis }}</div>
+                  {% elif edu.project %}
+                  <div class="career-row__desc" style="font-style: italic; margin-top: 4px;">Graduation Project: {{ edu.project }}</div>
+                  {% endif %}
+                </div>
+                <div class="career-row__badge">
+                  {% if edu.cgpa %}CGPA: {{ edu.cgpa }}
+                  {% elif edu.percentage %}Percentage: {{ edu.percentage }}
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+
+              <!-- Publication Row -->
+              <div class="career-row">
+                <div class="career-row__dot"></div>
+                <div class="career-row__period">2024</div>
+                <div class="career-row__body">
+                  <div class="career-row__title">“Machine Learning Models for Gamma-Hadron Separation”</div>
+                  <div class="career-row__inst">CREEST International Conference Publication</div>
+                  <div class="career-row__desc" style="margin-top: 4px;">
+                    Ensemble Gradient Boosting framework for particle classification, achieving 88% accuracy and outperforming SVM (85%), AdaBoost, and Naive Bayes (83%) baselines on telescope sensor datasets.
+                  </div>
+                </div>
+                <div class="career-row__badge">Research Pub</div>
+              </div>
+
+              <!-- Certifications Row -->
+              <div class="career-row">
+                <div class="career-row__dot"></div>
+                <div class="career-row__period">Certifications</div>
+                <div class="career-row__body">
+                  <div class="career-row__title">Professional Certifications & Bootcamps</div>
+                  <ul class="timeline-list" style="margin-top: 6px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem; list-style-type: circle;">
+                    <li>The Complete Python Bootcamp: From Zero to Hero (Udemy)</li>
+                    <li>Data Visualization with Power BI (Great Learning)</li>
+                    <li>Co-led an AI, Machine Learning & Robotics Bootcamp at Tella Academy for high school students</li>
+                    <li>Qualified for the Smart India Hackathon preliminary round</li>
+                  </ul>
+                </div>
+                <div class="career-row__badge">Certifications</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- What I Bring to the Table -->
+        <div class="career-traits" data-reveal>
+          <h3 class="career-traits__title">What I Bring to the Table</h3>
+          <div class="career-traits__grid">
+            <div class="trait-card">
+              <div class="trait-card__icon">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
+              </div>
+              <div class="trait-card__name">Problem Solver</div>
+              <div class="trait-card__desc">I enjoy solving complex problems with data, logic and creativity.</div>
+            </div>
+            <div class="trait-card">
+              <div class="trait-card__icon">
+                <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+              </div>
+              <div class="trait-card__name">Tech Enthusiast</div>
+              <div class="trait-card__desc">Always learning, exploring and building with new technologies.</div>
+            </div>
+            <div class="trait-card">
+              <div class="trait-card__icon">
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+              </div>
+              <div class="trait-card__name">Impact Focused</div>
+              <div class="trait-card__desc">I build solutions that create measurable value for businesses.</div>
+            </div>
+            <div class="trait-card">
+              <div class="trait-card__icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93V18h-2v1.93C7.05 19.44 4.56 16.95 4.07 14H6v-2H4.07C4.56 9.05 7.05 6.56 10 6.07V8h2V6.07c2.95.49 5.44 2.98 5.93 5.93H16v2h1.93c-.49 2.95-2.98 5.44-5.93 5.93z"/></svg>
+              </div>
+              <div class="trait-card__name">Growth Mindset</div>
+              <div class="trait-card__desc">Every step is a learning and every challenge is an opportunity.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Closing quote -->
+        <div class="career-quote" data-reveal>
+          <svg viewBox="0 0 24 24" class="career-quote__icon"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+          <p class="career-quote__text">Continuous learning. Meaningful impact. Limitless possibilities.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+      <div class="container">
+        <span class="section-eyebrow">Synapse Connection</span>
+        <h2 class="section-title">Get In Touch</h2>
+        
+        <div class="contact-container">
+          <div class="contact-info" data-reveal>
+            <p class="contact-info__text">
+              Interested in collaborating, hiring me, or discussing deep learning / computer vision architectures? 
+              Feel free to drop a message or reach out via direct channels.
+            </p>
+            
+            <ul class="contact-list">
+              <li class="contact-item">
+                <div class="contact-item__icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="contact-item__title">Email</div>
+                  <a href="mailto:{{ profile.email }}" class="contact-item__val">{{ profile.email }}</a>
+                </div>
+              </li>
+              <li class="contact-item">
+                <div class="contact-item__icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="contact-item__title">Phone</div>
+                  <div class="contact-item__val">{{ profile.phone }}</div>
+                </div>
+              </li>
+              <li class="contact-item">
+                <div class="contact-item__icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="contact-item__title">Location</div>
+                  <div class="contact-item__val">{{ profile.location }}</div>
+                </div>
+              </li>
+              <li class="contact-item">
+                <div class="contact-item__icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                </div>
+                <div>
+                  <div class="contact-item__title">LinkedIn</div>
+                  <a href="{{ profile.linkedin }}" target="_blank" class="contact-item__val">linkedin.com/in/meghavijayabalan</a>
+                </div>
+              </li>
+              <li class="contact-item">
+                <div class="contact-item__icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
+                </div>
+                <div>
+                  <div class="contact-item__title">GitHub</div>
+                  <a href="{{ profile.github }}" target="_blank" class="contact-item__val">github.com/megharaj1997</a>
+                </div>
+              </li>
+            </ul>
+
+            <div class="contact-socials">
+              <a href="{{ profile.github }}" target="_blank" class="social-link" aria-label="GitHub">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+                </svg>
+              </a>
+              <a href="{{ profile.linkedin }}" target="_blank" class="social-link" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          
+          <form id="contact-form" class="contact-form" data-reveal>
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" name="name" required placeholder="John Doe">
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required placeholder="john@example.com">
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required placeholder="Let's build something intelligent..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn--primary" style="width: 100%;">Send Connection Request</button>
+            
+            <div id="form-message" class="form-message"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Floating TTS Audio Reader Control Panel -->
+  <div class="audio-controller" id="audio-controller">
+    <div class="audio-controller__header">
+      <span class="audio-controller__title">Voice Synthesizer</span>
+      <button class="audio-btn" id="audio-stop" aria-label="Stop reading" style="border:none;">
+        <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="audio-controller__status" id="audio-status">Reading: Introduction</div>
+    <div class="audio-controller__body">
+      <button class="audio-btn audio-btn--play-pause" id="audio-play-pause" aria-label="Play or Pause">
+        <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <div class="audio-controls-row">
+        <div class="audio-slider-group">
+          <label for="audio-volume">Volume</label>
+          <input type="range" id="audio-volume" min="0" max="1" step="0.1" value="0.9">
+        </div>
+        <div class="audio-slider-group">
+          <label for="audio-speed">Speed</label>
+          <input type="range" id="audio-speed" min="0.6" max="1.8" step="0.1" value="1.0">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Chatbot UI Drawer -->
+  <div class="chatbot-wrapper">
+    <button class="chatbot-toggle" id="chatbot-toggle" aria-label="Open Chatbot">
+      <svg class="icon-chat" viewBox="0 0 24 24">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+      </svg>
+      <svg class="icon-close" viewBox="0 0 24 24">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </button>
+    
+    <div class="chatbot-drawer" id="chatbot-drawer">
+      <div class="chatbot-header">
+        <img src="{{ url_for('static', filename='images/profile_1.jpeg') }}" alt="Megha Raj Bot" class="chatbot-avatar">
+        <div class="chatbot-header-text">
+          <h4>Megha Raj AI Bot</h4>
+          <p>Synapse Assistant • Online</p>
+        </div>
+      </div>
+      
+      <div class="chatbot-feed" id="chatbot-feed">
+        <div class="chat-bubble chat-bubble--bot">
+          Hello! I'm Megha Raj's AI Bot. Ask me anything about her skills, projects (like SilentSpeak), education, or work history.
+        </div>
+      </div>
+
+      <div class="chatbot-suggestions">
+        <span class="suggestion-chip" data-question="What is your experience?">Experience</span>
+        <span class="suggestion-chip" data-question="Tell me about SilentSpeak project.">SilentSpeak</span>
+        <span class="suggestion-chip" data-question="What are your core skills?">Skills</span>
+        <span class="suggestion-chip" data-question="How can I contact you?">Contact</span>
+      </div>
+      
+      <div class="chatbot-input-container">
+        <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Ask about Megha Raj V S..." autocomplete="off">
+        <button id="chatbot-send" class="chatbot-send" aria-label="Send Message">
+          <svg viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="container footer-text">
+      <p>&copy; 2026 {{ profile.name }}. Designed with a dendritic network concept.</p>
+      <p style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); font-style: italic;">
+        "Drifting nodes represent the connections we make; firing impulses represent the thoughts we share."
+      </p>
+    </div>
+  </footer>
+
+  <!-- JS Scripts -->
+  <script src="{{ url_for('static', filename='js/neurons.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+.env
+submissions.json
+__pycache__/
+*.pyc
+instance/
+.pytest_cache/
+.vscode/
+.idea/
+*.log
