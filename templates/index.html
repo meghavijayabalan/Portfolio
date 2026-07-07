@@ -135,7 +135,7 @@
             <div class="hero__actions">
               <a href="#projects" class="btn btn--primary">View My Work &rarr;</a>
               
-              <a href="#" class="btn btn--secondary" style="display:inline-flex; align-items:center; gap:8px;">
+              <a href="{{ url_for('static', filename='Megha_Raj_VS_Resume.pdf') }}" download="Megha_Raj_VS_Resume.pdf" class="btn btn--secondary" style="display:inline-flex; align-items:center; gap:8px;">
                 Download CV
                 <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;">
                   <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
@@ -327,8 +327,8 @@
           <div class="about__details" data-reveal>
             <div class="section-header-row">
               <div>
-                <span class="section-eyebrow">About Me</span>
-                <h2 class="section-title">Bridging Data & Cognition</h2>
+                <span class="section-eyebrow">MEGHA RAJ VS</span>
+                <h2 class="section-title">Where Data Meets Intelligence.</h2>
               </div>
               <button class="btn-listen" data-read="about" aria-label="Listen to About section">
                 <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
@@ -339,18 +339,17 @@
             
             <div class="about__bio" id="about-bio-text">
               <p class="about__bio-para">
-                I am a passionate Data Scientist and AI Engineer. With a solid grounding in Digital Image Computing, 
-                my expertise lies in designing deep neural architectures and optimization frameworks. 
-                I specialize in making deep learning more accessible, resource-efficient, and practical for production deployment.
+                Every dataset tells a story. Every model should solve a real problem.
               </p>
               <p class="about__bio-para">
-                My career path represents a deliberate transition: starting with Automation (RPA) & Data Analysis, 
-                where I built software robots and optimized backend workflows, and evolving into Deep Learning & Computer Vision, 
-                where I design spatiotemporal neural networks for visual speech recognition (lip-reading) and advanced mathematical 
-                imaging solutions.
+                I specialize in building AI systems that move beyond experimentation into real-world impact. My expertise combines data engineering, machine learning, LLM applications, analytics, and computer vision to develop solutions that are accurate, scalable, and practical.
               </p>
               <p class="about__bio-para">
-                I believe in building clean, standalone, and explainable AI pipelines. Let's build something intelligent!
+                From automating enterprise workflows to designing deep learning architectures, my focus has always remained the same—building technology that creates measurable value.
+              </p>
+              <p class="about__bio-para">
+                For me, AI isn't about replacing people.<br>
+                It's about empowering better decisions, faster innovation, and meaningful outcomes.
               </p>
             </div>
             <div class="hero__cta" style="justify-content: flex-start; margin-top: 24px;">
@@ -525,7 +524,7 @@
                 <div class="career-row__body">
                   <div class="career-row__title">{{ exp.role }}</div>
                   <div class="career-row__company">{{ exp.company }}</div>
-                  <ul class="timeline-list" style="margin-top: 8px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem; list-style-type: disc;">
+                  <ul class="timeline-list" style="margin-top: 8px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem;">
                     {% for desc in exp.description %}
                     <li style="margin-bottom: 6px;">{{ desc | safe }}</li>
                     {% endfor %}
@@ -596,7 +595,7 @@
                 <div class="career-row__period">Certifications</div>
                 <div class="career-row__body">
                   <div class="career-row__title">Professional Certifications &amp; Bootcamps</div>
-                  <ul class="timeline-list" style="margin-top: 6px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem; list-style-type: circle;">
+                  <ul class="timeline-list" style="margin-top: 6px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem;">
                     {% for cert in certifications %}
                     <li>{{ cert }}</li>
                     {% endfor %}
