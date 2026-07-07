@@ -25,6 +25,7 @@
         <ul class="nav-menu" id="nav-menu">
           <li><a href="#hero" class="nav-link">Home</a></li>
           <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#achievements" class="nav-link">Achievements</a></li>
           <li><a href="#skills" class="nav-link">Skills</a></li>
           <li><a href="#projects" class="nav-link">Projects</a></li>
           <li><a href="#journey" class="nav-link">Journey</a></li>
@@ -361,6 +362,36 @@
       </div>
     </section>
 
+    <!-- Key Achievements Section -->
+    <section id="achievements" class="achievements-section">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-eyebrow">Synaptic Firings</span>
+            <h2 class="section-title">Key Achievements</h2>
+          </div>
+          <button class="btn-listen" data-read="achievements" aria-label="Listen to Achievements section">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <span class="soundwave"><span></span><span></span><span></span><span></span></span>
+            <span>Listen</span>
+          </button>
+        </div>
+        
+        <div class="achievements-grid" id="achievements-text">
+          {% for ach in achievements %}
+          <div class="achievement-card" data-reveal>
+            <div class="achievement-card__node">
+              <div class="achievement-card__pulse"></div>
+            </div>
+            <div class="achievement-card__content">
+              <p>{{ ach }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
     <!-- Skills Section -->
     <section id="skills">
       <div class="container">
@@ -496,7 +527,7 @@
                   <div class="career-row__company">{{ exp.company }}</div>
                   <ul class="timeline-list" style="margin-top: 8px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem; list-style-type: disc;">
                     {% for desc in exp.description %}
-                    <li style="margin-bottom: 6px;">{{ desc }}</li>
+                    <li style="margin-bottom: 6px;">{{ desc | safe }}</li>
                     {% endfor %}
                   </ul>
                 </div>
@@ -543,31 +574,32 @@
               </div>
               {% endfor %}
 
-              <!-- Publication Row -->
+              <!-- Publications Loop -->
+              {% for pub in publications %}
               <div class="career-row">
                 <div class="career-row__dot"></div>
-                <div class="career-row__period">2024</div>
+                <div class="career-row__period">{{ pub.period }}</div>
                 <div class="career-row__body">
-                  <div class="career-row__title">“Machine Learning Models for Gamma-Hadron Separation”</div>
-                  <div class="career-row__inst">CREEST International Conference Publication</div>
+                  <div class="career-row__title">{{ pub.title }}</div>
+                  <div class="career-row__inst">{{ pub.institution }}</div>
                   <div class="career-row__desc" style="margin-top: 4px;">
-                    Ensemble Gradient Boosting framework for particle classification, achieving 88% accuracy and outperforming SVM (85%), AdaBoost, and Naive Bayes (83%) baselines on telescope sensor datasets.
+                    {{ pub.description }}
                   </div>
                 </div>
-                <div class="career-row__badge">Research Pub</div>
+                <div class="career-row__badge">{{ pub.badge }}</div>
               </div>
+              {% endfor %}
 
               <!-- Certifications Row -->
               <div class="career-row">
                 <div class="career-row__dot"></div>
                 <div class="career-row__period">Certifications</div>
                 <div class="career-row__body">
-                  <div class="career-row__title">Professional Certifications & Bootcamps</div>
+                  <div class="career-row__title">Professional Certifications &amp; Bootcamps</div>
                   <ul class="timeline-list" style="margin-top: 6px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem; list-style-type: circle;">
-                    <li>The Complete Python Bootcamp: From Zero to Hero (Udemy)</li>
-                    <li>Data Visualization with Power BI (Great Learning)</li>
-                    <li>Co-led an AI, Machine Learning & Robotics Bootcamp at Tella Academy for high school students</li>
-                    <li>Qualified for the Smart India Hackathon preliminary round</li>
+                    {% for cert in certifications %}
+                    <li>{{ cert }}</li>
+                    {% endfor %}
                   </ul>
                 </div>
                 <div class="career-row__badge">Certifications</div>
@@ -781,9 +813,11 @@
       </div>
 
       <div class="chatbot-suggestions">
+        <span class="suggestion-chip" data-question="What are your key achievements?">Achievements</span>
         <span class="suggestion-chip" data-question="What is your experience?">Experience</span>
         <span class="suggestion-chip" data-question="Tell me about SilentSpeak project.">SilentSpeak</span>
         <span class="suggestion-chip" data-question="What are your core skills?">Skills</span>
+        <span class="suggestion-chip" data-question="Tell me about your publications.">Publications</span>
         <span class="suggestion-chip" data-question="How can I contact you?">Contact</span>
       </div>
       

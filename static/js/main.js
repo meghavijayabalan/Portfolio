@@ -222,12 +222,21 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       return text;
     }
+
+    if (type === 'achievements') {
+      let text = "Key Achievements of Megha Raj V S. ";
+      const achCards = document.querySelectorAll('#achievements-text .achievement-card__content p');
+      achCards.forEach(p => {
+        text += p.textContent + " ";
+      });
+      return text;
+    }
     
     if (type === 'projects') {
       return (
         "Featured Projects by Megha Raj V S. We have SilentSpeak Visual Speech Recognition, " +
-        "Image Processing based Cartoon Generator, 3D Robotic Arm Web Application, " +
-        "Autonomous Fruit Picker Robot, and Comparison of Machine Learning methods for Gamma Rays. " +
+        "Comparison of Machine Learning methods for Gamma Rays, Fashion MNIST ANN Classifier, " +
+        "Image Processing based Cartoon Generator, Autonomous Fruit Picker Robot, and 3D Robotic Arm Web Application. " +
         "Click individual listen buttons on each card to hear technical methodologies."
       );
     }

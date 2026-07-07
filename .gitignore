@@ -1,5 +1,6 @@
 .env
 submissions.json
+venv/
 __pycache__/
 *.pyc
 instance/

@@ -1,4 +1,5 @@
 import os
+import re
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -14,15 +15,29 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-12345")
 
+def format_experience(exp_list):
+    formatted = []
+    for exp in exp_list:
+        new_exp = exp.copy()
+        new_exp["description"] = [
+            re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', desc)
+            for desc in exp["description"]
+        ]
+        formatted.append(new_exp)
+    return formatted
+
 @app.route("/")
 def index():
     return render_template(
         "index.html",
         profile=profile_data.PROFILE,
-        experience=profile_data.EXPERIENCE,
+        experience=format_experience(profile_data.EXPERIENCE),
         skills=profile_data.SKILLS,
         projects=profile_data.PROJECTS,
-        education=profile_data.EDUCATION
+        education=profile_data.EDUCATION,
+        achievements=profile_data.KEY_ACHIEVEMENTS,
+        publications=profile_data.PUBLICATIONS,
+        certifications=profile_data.CERTIFICATIONS
     )
 
 @app.route("/api/chat", methods=["POST"])
