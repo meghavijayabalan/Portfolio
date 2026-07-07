@@ -1,5 +1,7 @@
 import os
 import smtplib
+import urllib.request
+import json
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, request, jsonify
@@ -74,6 +76,45 @@ def api_contact():
     except Exception as e:
         print(f"Failed to log submission: {e}")
         
+    # Formspree integration
+    formspree_form_id = os.getenv("FORMSPREE_FORM_ID", "").strip()
+    if formspree_form_id:
+        url = f"https://formspree.io/f/{formspree_form_id}"
+        payload = {
+            "name": name,
+            "email": email,
+            "message": message
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
+            },
+            method="POST"
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_body = json.loads(response.read().decode("utf-8"))
+                if res_body.get("ok"):
+                    return jsonify({
+                        "success": True,
+                        "message": "Thank you! Your message has been sent successfully. Megha Raj V S will get back to you soon."
+                    })
+                else:
+                    raise Exception("Formspree returned an error status.")
+        except Exception as e:
+            print(f"Formspree Error: {e}")
+            return jsonify({
+                "success": False,
+                "message": (
+                    f"Oops! There was an issue sending your message via Formspree: {str(e)}. "
+                    f"Please reach out directly to Megha Raj V S at {profile_data.PROFILE['email']}."
+                )
+            })
+
     smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
     smtp_port = os.getenv("SMTP_PORT")
     smtp_user = os.getenv("SMTP_USER", "").strip()
