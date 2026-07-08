@@ -511,6 +511,16 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => chatbotInput.focus(), 300);
       }
     });
+
+    // Close chatbot drawer when clicking anywhere outside it
+    document.addEventListener('click', (e) => {
+      if (chatbotDrawer.classList.contains('active')) {
+        if (!chatbotDrawer.contains(e.target) && !chatbotToggle.contains(e.target)) {
+          chatbotToggle.classList.remove('active');
+          chatbotDrawer.classList.remove('active');
+        }
+      }
+    });
   }
 
   suggestionChips.forEach(chip => {

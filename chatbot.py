@@ -9,16 +9,17 @@ BUCKET_PATTERNS = {
     "projects": re.compile(r"\b(projects?|portfolio|silentspeak|cartoon|robotic\s+arms?|fruit\s+pickers?|gamma|mnist|fashion)\b", re.IGNORECASE),
     "experience": re.compile(r"\b(experiences?|work|jobs?|careers?|roles?|history|positions?)\b", re.IGNORECASE),
     "skills": re.compile(r"\b(skills?|technolog(y|ies)|tools?|stack|programming|languages?)\b", re.IGNORECASE),
-    "education": re.compile(r"\b(educations?|stud(y|ies)|colleges?|universit(y|ies)|degrees?|m\.?tech|b\.?tech|academics?)\b", re.IGNORECASE),
-    "contact": re.compile(r"\b(contacts?|emails?|reach|phones?|touch|hire|messages?|write)\b", re.IGNORECASE),
+    "education": re.compile(r"\b(educations?|stud(y|ies)|colleges?|universit(y|ies)|degrees?|m\.?tech|b\.?tech|academics?|schools?|schooling)\b", re.IGNORECASE),
+    "contact": re.compile(r"\b(contacts?|emails?|reach|phones?|touch|hire|messages?|write|gmail|mail)\b", re.IGNORECASE),
     "location": re.compile(r"\b(locations?|lives?|where|from|based|address(es)?)\b", re.IGNORECASE),
     "family_personal": re.compile(r"\b(famil(y|ies)|parents?|fathers?|mothers?|siblings?|personal|brothers?|sisters?|homes?|dob|birth|birthdays?|born|age)\b", re.IGNORECASE),
-    "socials": re.compile(r"\b(instagram|insta|facebook|socials?|ig|fb)\b", re.IGNORECASE),
+    "socials": re.compile(r"\b(instagram|insta|facebook|socials?|ig|fb|linkedin|github|git|ln)\b", re.IGNORECASE),
     "summary": re.compile(r"\b(summary|background|about|who\s+are\s+you|tell\s+me\s+about\s+yourself|who\s+is\s+megha|who\s+is\s+she|who\s+is)\b", re.IGNORECASE),
     "achievements": re.compile(r"\b(achievements?|accomplishments?|success(es)?|awards?)\b", re.IGNORECASE),
     "publications": re.compile(r"\b(publications?|papers?|conferences?|creest)\b", re.IGNORECASE),
     "certifications": re.compile(r"\b(certifications?|certificates?|courses?|udemy|learning)\b", re.IGNORECASE),
     "graph": re.compile(r"\b(graphs?|charts?|plots?|visualiz(e|ation)|draw|diagrams?)\b", re.IGNORECASE),
+    "companies": re.compile(r"\b(companies|company|employer|employers|workplace|workplaces|orgs|organizations)\b", re.IGNORECASE),
 }
 
 def generate_skills_graph():
@@ -197,6 +198,77 @@ def generate_general_graph():
 # Helper regex for additional on-topic checks
 ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
 
+def explain_skill_or_keyword(message: str) -> str:
+    message_lc = message.lower()
+    
+    # Identify a tech or skill Megha has from SKILLS categories or other known technical terms
+    all_techs = set()
+    for cat, list_of_techs in profile_data.SKILLS.items():
+        for t in list_of_techs:
+            all_techs.add(t)
+            if "(" in t:
+                parts = t.split("(")
+                all_techs.add(parts[0].strip())
+                all_techs.add(parts[1].replace(")", "").strip())
+                
+    # Core tags to capture
+    all_techs.update(["pyspark", "aws glue", "athena", "s3", "xgboost", "prophet", "three.js", "webgl", "chromadb", "bm25", "redis", "langchain", "langgraph", "keras", "tensorflow", "opencv", "numpy", "pandas", "matplotlib", "seaborn", "mediapipe", "spark", "sql", "postgresql", "mongodb", "mysql", "docker", "git", "scikit-learn"])
+
+    matched_techs = []
+    for tech in all_techs:
+        pattern = re.compile(rf"\b{re.escape(tech.lower())}\b", re.IGNORECASE)
+        if pattern.search(message_lc):
+            matched_techs.append(tech)
+            
+    if not matched_techs:
+        return None
+        
+    matched_techs.sort(key=len, reverse=True)
+    best_tech = matched_techs[0]
+    
+    # Look for projects mentioning this tech
+    matching_projects = []
+    for proj in profile_data.PROJECTS:
+        tech_match = any(best_tech.lower() in t.lower() for t in proj.get("tech_stack", []))
+        content_match = (
+            best_tech.lower() in proj["title"].lower() or 
+            best_tech.lower() in proj["description"].lower() or 
+            best_tech.lower() in proj.get("methodology", "").lower()
+        )
+        if tech_match or content_match:
+            matching_projects.append(proj)
+            
+    # Look for experience bullets mentioning this tech
+    matching_exp = []
+    for exp in profile_data.EXPERIENCE:
+        matching_bullets = [b for b in exp["description"] if best_tech.lower() in b.lower()]
+        if matching_bullets:
+            matching_exp.append((exp, matching_bullets))
+            
+    if matching_projects or matching_exp:
+        response = f"Megha Raj V S has direct hands-on experience with **{best_tech}** in the following areas of her work:\n\n"
+        if matching_projects:
+            proj_list = []
+            for p in matching_projects:
+                proj_list.append(
+                    f"### {p['title']} ({p['category']})\n"
+                    f"- **Application**: {p['description']}\n"
+                    f"- **Methodology**: {p['methodology']}\n"
+                    f"- **Metrics/Impact**: {p['metrics']}"
+                )
+            response += "#### Projects:\n" + "\n\n".join(proj_list) + "\n\n"
+            
+        if matching_exp:
+            exp_list = []
+            for exp, bullets in matching_exp:
+                bullets_str = "\n".join([f"  * {b}" for b in bullets])
+                exp_list.append(f"- **{exp['role']}** at **{exp['company']}**:\n{bullets_str}")
+            response += "#### Professional Experience:\n" + "\n".join(exp_list)
+            
+        return response
+        
+    return None
+
 def is_on_topic(message: str) -> bool:
     """
     Checks if a message is related to Megha Raj V S's profile, experience, projects, education, or contact details.
@@ -207,6 +279,8 @@ def is_on_topic(message: str) -> bool:
     for pat in BUCKET_PATTERNS.values():
         if pat.search(message_lc):
             return True
+    if explain_skill_or_keyword(message) is not None:
+        return True
     return False
 
 def get_chat_response(message: str) -> str:
@@ -258,6 +332,10 @@ def get_chat_response(message: str) -> str:
                 f"![Profile Highlights]({url})\n\n"
                 "This summarizes her featured projects, academic projects, experience, research papers, and certifications."
             )
+    else:
+        explanation = explain_skill_or_keyword(message)
+        if explanation:
+            return explanation
 
     # Single-pass scoring of all intents
     scores = {}
@@ -418,9 +496,14 @@ def get_chat_response(message: str) -> str:
 
     # 9. CONTACT
     elif best_bucket == "contact":
+        if any(kw in message_lc for kw in ["gmail", "email", "mail"]):
+            return (
+                "You can reach Megha Raj V S via Gmail at: "
+                "[megharaj.v.s.97@gmail.com](mailto:megharaj.v.s.97@gmail.com)"
+            )
         return (
             f"You can contact Megha Raj V S via:\n"
-            f"- **Email**: {profile_data.PROFILE['email']}\n"
+            f"- **Email**: [megharaj.v.s.97@gmail.com](mailto:megharaj.v.s.97@gmail.com)\n"
             f"- **Phone**: {profile_data.PROFILE['phone']}\n"
             f"- **Location**: {profile_data.PROFILE['location']}\n\n"
             f"Or you can submit the contact form on this page to send a real email directly to her!"
@@ -439,13 +522,13 @@ def get_chat_response(message: str) -> str:
             )
         elif any(kw in message_lc for kw in ["linkedin", "ln"]):
             return (
-                f"Megha Raj V S's LinkedIn profile is: "
-                f"[{profile_data.PROFILE['linkedin']}]({profile_data.PROFILE['linkedin']})"
+                "Megha Raj V S's LinkedIn profile is: "
+                "[meghavijayabalan](https://www.linkedin.com/in/meghavijayabalan)"
             )
         elif any(kw in message_lc for kw in ["github", "git"]):
             return (
-                f"Megha Raj V S's GitHub profile is: "
-                f"[{profile_data.PROFILE['github']}]({profile_data.PROFILE['github']})"
+                "Megha Raj V S's GitHub profile is: "
+                "[megharaj1997](https://github.com/megharaj1997)"
             )
         elif any(kw in message_lc for kw in ["facebook", "fb"]):
             return (
@@ -454,8 +537,8 @@ def get_chat_response(message: str) -> str:
             )
         return (
             f"Here are Megha Raj V S's social media profiles:\n"
-            f"- **LinkedIn**: [{profile_data.PROFILE['linkedin']}]({profile_data.PROFILE['linkedin']})\n"
-            f"- **GitHub**: [{profile_data.PROFILE['github']}]({profile_data.PROFILE['github']})\n"
+            f"- **LinkedIn**: [meghavijayabalan](https://www.linkedin.com/in/meghavijayabalan)\n"
+            f"- **GitHub**: [megharaj1997](https://github.com/megharaj1997)\n"
             f"- **Instagram**: [megha_vijayabalan](https://www.instagram.com/megha_vijayabalan?igsh=dzAxbnVkczBzNHBs) (username: `megha_vijayabalan`)\n"
             f"- **Facebook**: [megha_vijayabalan](https://www.facebook.com/share/1871xeJjCH/) (username: `megha_vijayabalan`)"
         )
@@ -479,8 +562,19 @@ def get_chat_response(message: str) -> str:
             f"ranging from RPA and Data Analysis to Computer Vision and Deep Learning research."
         )
 
+    # 14. COMPANIES
+    elif best_bucket == "companies":
+        return (
+            "Megha Raj V S has worked at the following companies:\n\n"
+            "1. **ChargeMOD**\n"
+            "   - **Role**: Data Scientist (May 2025 - Present)\n"
+            "   - **Role**: Data Science Intern (Mar 2024 - May 2024)\n"
+            "2. **Software Incubator Pvt. Ltd.**\n"
+            "   - **Role**: RPA Data Analyst (Jun 2022 - May 2024)"
+        )
+
     # Default fallback just in case
     return (
-        "I only talk about Megha Raj's work — experience, skills, projects, "
-        "education or how to get in touch. Try asking me one of those!"
+        "I only talk about Megha's work — experience, skills, projects, "
+        "education, companies or how to get in touch. Try asking me one of those!"
     )
