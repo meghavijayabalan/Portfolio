@@ -167,24 +167,14 @@
           </div>
           
           <div class="hero__image-side" data-reveal>
-            <div class="hero__photo-wrapper">
-              <div class="hero__photo-mask">
-                <!-- Single profile picture (red shirt profile_1) -->
-                <img src="{{ url_for('static', filename='images/profile_1.jpeg') }}" alt="{{ profile.name }}">
+            <div class="portrait-stage" id="hero-portrait">
+              <div class="portrait-halo"></div>
+              <div class="portrait-frame">
+                <div class="inner">
+                  <img src="{{ url_for('static', filename='images/profile-nobg.png') }}" alt="{{ profile.name }}">
+                </div>
               </div>
-              <div class="hero__photo-bg">
-                <svg viewBox="0 0 380 380">
-                  <!-- Orbital rings with node points, responsive in light/dark themes -->
-                  <circle class="orbit-ring orbit-ring--inner" cx="190" cy="190" r="165"/>
-                  <circle class="orbit-ring orbit-ring--outer" cx="190" cy="190" r="182"/>
-                  <circle class="orbit-node" cx="190" cy="8" r="4.5"/>
-                  <circle class="orbit-node" cx="25" cy="190" r="3"/>
-                  <!-- Curved dendritic path waves -->
-                  <path class="dendrite-wave" d="M 190,15 C 295,15 365,85 365,190 C 365,295 285,365 190,365 C 95,365 15,285 15,190 C 15,85 85,15 190,15 Z" />
-                  <path class="dendrite-branch" d="M 15,220 C 100,320 200,220 365,220" />
-                  <path class="dendrite-branch" d="M 10,250 C 90,350 190,250 370,250" />
-                </svg>
-              </div>
+              <canvas id="portrait-vortex-canvas" class="portrait-vortex"></canvas>
             </div>
           </div>
         </div>
@@ -843,6 +833,7 @@
 
   <!-- JS Scripts -->
   <script src="{{ url_for('static', filename='js/neurons.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/portrait-vortex.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
