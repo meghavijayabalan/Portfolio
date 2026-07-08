@@ -210,6 +210,65 @@ export const skills = [
   },
 ];
 
+export const certifications = [
+  {
+    title: "The Complete Python Bootcamp: From Zero to Hero",
+    issuer: "Udemy",
+    year: "2022",
+    tag: "Programming",
+  },
+  {
+    title: "Data Visualization with Power BI",
+    issuer: "Great Learning",
+    year: "2023",
+    tag: "Analytics",
+  },
+  {
+    title: "AI, Machine Learning & Robotics Bootcamp — Co-lead",
+    issuer: "Tella Academy",
+    year: "2023",
+    tag: "Teaching",
+  },
+  {
+    title: "Smart India Hackathon — Qualified Preliminary Round",
+    issuer: "Government of India",
+    year: "2022",
+    tag: "Recognition",
+  },
+  {
+    title: "Machine Learning Models for Gamma-Hadron Separation",
+    issuer: "CREEST International Conference",
+    year: "2024",
+    tag: "Publication",
+  },
+];
+
+export const techLogos = [
+  { name: "Python", slug: "python", color: "3776ab" },
+  { name: "SQL", slug: "postgresql", color: "4169e1" },
+  { name: "AWS", slug: "amazonwebservices", color: "ff9900" },
+  { name: "MongoDB", slug: "mongodb", color: "47a248" },
+  { name: "LangChain", slug: "langchain", color: "1c3c3c" },
+  { name: "OpenAI", slug: "openai", color: "412991" },
+  { name: "PowerBI", slug: "powerbi", color: "f2c811" },
+  { name: "Docker", slug: "docker", color: "2496ed" },
+];
+
+export const heroStats = [
+  { n: "3+", l1: "Years", l2: "Experience", icon: "calendar" },
+  { n: "2", l1: "Years", l2: "RPA Analyst", icon: "users" },
+  { n: "1+", l1: "Year", l2: "Data Scientist", icon: "flask" },
+  { n: "10+", l1: "Projects", l2: "Delivered", icon: "package" },
+  { n: "15%+", l1: "Business Impact", l2: "Delivered", icon: "trending" },
+];
+
+export const heroCategories = [
+  { title: "AI & Machine Learning", icon: "brain" },
+  { title: "Data Science & Analytics", icon: "chart" },
+  { title: "Cloud & Data Engineering", icon: "cloud" },
+  { title: "AI Agents & Automation", icon: "bot" },
+];
+
 export const values = [
   {
     title: "Problem Solver",

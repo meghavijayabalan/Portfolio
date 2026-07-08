@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Menu,
   X,
@@ -22,8 +22,15 @@ import {
   BookOpen,
   Send,
   ExternalLink,
+  Users,
+  FlaskConical,
+  Package,
+  TrendingUp,
+  CalendarDays,
+  Bot,
+  FileText,
+  Trophy,
 } from "lucide-react";
-import NeuralCanvas from "@/components/NeuralCanvas";
 import PortraitVortex from "@/components/PortraitVortex";
 import { useTheme } from "@/context/ThemeContext";
 import {
@@ -34,6 +41,10 @@ import {
   achievements,
   skills,
   values,
+  certifications,
+  techLogos,
+  heroStats,
+  heroCategories,
 } from "@/data/portfolio";
 
 const NAV = [
@@ -41,7 +52,8 @@ const NAV = [
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Projects" },
-  { id: "journey", label: "Journey" },
+  { id: "experience", label: "Experience" },
+  { id: "certificates", label: "Certificates" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -62,6 +74,27 @@ const useReveal = () => {
     document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
+};
+
+const iconForCategory = (id, size = 24) => {
+  const map = {
+    brain: <BrainCircuit size={size} />,
+    chart: <BarChart3 size={size} />,
+    cloud: <Cloud size={size} />,
+    bot: <Bot size={size} />,
+  };
+  return map[id] || <Sparkles size={size} />;
+};
+
+const iconForStat = (id, size = 18) => {
+  const map = {
+    calendar: <CalendarDays size={size} />,
+    users: <Users size={size} />,
+    flask: <FlaskConical size={size} />,
+    package: <Package size={size} />,
+    trending: <TrendingUp size={size} />,
+  };
+  return map[id] || <Sparkles size={size} />;
 };
 
 const Nav = () => {
@@ -92,10 +125,11 @@ const Nav = () => {
   return (
     <nav className="nav" data-testid="main-nav">
       <div className="brand" data-testid="brand-logo">
+        <span>Megha Raj V S</span>
         <span className="brand-dot" />
-        Megha Raj V S
       </div>
-      <div className={`nav-links flex items-center gap-1 ${open ? "open" : ""}`}>
+
+      <div className={`nav-links ${open ? "open" : ""}`}>
         {NAV.map((n) => (
           <a
             key={n.id}
@@ -108,205 +142,173 @@ const Nav = () => {
           </a>
         ))}
       </div>
-      <button
-        className="theme-btn"
-        onClick={toggleTheme}
-        aria-label="Toggle theme"
-        data-testid="theme-toggle"
-      >
-        {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-      </button>
-      <button
-        className="mobile-menu-btn"
-        onClick={() => setOpen((s) => !s)}
-        aria-label="Menu"
-        data-testid="mobile-menu-toggle"
-      >
-        {open ? <X size={18} /> : <Menu size={18} />}
-      </button>
+
+      <div className="flex items-center gap-3">
+        <button
+          className={`theme-switch ${theme === "dark" ? "is-dark" : "is-light"}`}
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+          data-testid="theme-toggle"
+        >
+          <span className="thumb">
+            {theme === "dark" ? <Moon size={13} /> : <Sun size={13} />}
+          </span>
+        </button>
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setOpen((s) => !s)}
+          aria-label="Menu"
+          data-testid="mobile-menu-toggle"
+        >
+          {open ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
     </nav>
   );
 };
 
 const Hero = () => (
   <section id="home" className="hero" data-testid="section-home">
-    <div className="floating-shapes">
-      <div className="shape s1" />
-      <div className="shape s2" />
-      <div className="shape s3" />
-    </div>
-    <div className="container-x z-content grid md:grid-cols-2 gap-16 items-center">
-      <div className="reveal">
-        <span className="eyebrow" data-testid="hero-eyebrow">
-          <Sparkles size={12} /> Data Scientist · AI Developer
-        </span>
-        <h1 className="hero-title" data-testid="hero-title">
-          I turn data into <span className="accent">intelligence.</span>
-          <br />
-          I turn ideas into <span className="accent">impact.</span>
-        </h1>
-        <p className="hero-sub">
-          Megha Raj V S — Data Scientist & AI Engineer with 1.3+ years of
-          production experience building LLM agents, RAG pipelines, and
-          cloud-scale ETL systems that drive measurable business value.
-        </p>
+    <div className="container-x z-content w-full">
+      <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="reveal">
+          <span className="eyebrow" data-testid="hero-eyebrow">
+            <Sparkles size={12} /> Data Scientist | AI Developer
+          </span>
 
-        <div className="flex flex-wrap gap-2 mb-8">
-          {[
-            { icon: <BrainCircuit size={12} />, t: "AI & Machine Learning" },
-            { icon: <BarChart3 size={12} />, t: "Data Science & Analytics" },
-            { icon: <Cloud size={12} />, t: "Cloud & Data Engineering" },
-            { icon: <Zap size={12} />, t: "Agents & Automation" },
-          ].map((c) => (
-            <span key={c.t} className="chip">
-              {c.icon} {c.t}
+          <h1 className="hero-title" data-testid="hero-title">
+            I turn data into <span className="accent">intelligence.</span>
+            <br />
+            I turn ideas into <span className="accent">impact.</span>
+          </h1>
+
+          <p className="hero-desc">
+            Building intelligent AI agents, analytics platforms and cloud data
+            pipelines that solve real-world problems and drive measurable
+            business value.
+          </p>
+
+          <div className="cat-row">
+            {heroCategories.map((c) => (
+              <div key={c.title} className="cat-item">
+                <div className="cat-circle">{iconForCategory(c.icon, 22)}</div>
+                <div className="cat-label">{c.title}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-3 mt-4">
+            <a
+              href="#projects"
+              className="btn-solid"
+              data-testid="cta-view-work"
+            >
+              View My Work <ArrowRight size={16} />
+            </a>
+            <a
+              href="/cv.pdf"
+              download
+              className="btn-outline"
+              data-testid="cta-download-cv"
+            >
+              Download CV <Download size={16} />
+            </a>
+          </div>
+
+          <div className="social-row">
+            <span className="social-label">Connect with me</span>
+            <a
+              href="https://www.linkedin.com/in/meghavijayabalan"
+              target="_blank"
+              rel="noreferrer"
+              className="social-circle"
+              data-testid="social-linkedin"
+              aria-label="LinkedIn"
+            >
+              <Linkedin size={16} />
+            </a>
+            <a
+              href="https://github.com/megharaj1997"
+              target="_blank"
+              rel="noreferrer"
+              className="social-circle"
+              data-testid="social-github"
+              aria-label="GitHub"
+            >
+              <Github size={16} />
+            </a>
+            <a
+              href="mailto:megha042023@gmail.com"
+              className="social-circle"
+              data-testid="social-email"
+              aria-label="Email"
+            >
+              <Mail size={16} />
+            </a>
+            <a
+              href="/cv.pdf"
+              download
+              className="social-circle"
+              data-testid="social-cv"
+              aria-label="Resume"
+            >
+              <FileText size={16} />
+            </a>
+          </div>
+        </div>
+
+        <div className="reveal" style={{ transitionDelay: "0.1s" }}>
+          <div className="portrait-stage" data-testid="hero-portrait">
+            <div className="portrait-halo" />
+            <div className="portrait-frame">
+              <div className="inner">
+                <img src="/images/profile.jpeg" alt="Megha Raj V S" />
+              </div>
+            </div>
+            <PortraitVortex />
+          </div>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="hero-stats reveal" data-testid="hero-stats">
+        {heroStats.map((s) => (
+          <div key={s.n + s.l2} className="hero-stat">
+            <div className="stat-icon">{iconForStat(s.icon)}</div>
+            <div className="stat-body">
+              <div className="stat-num">{s.n}</div>
+              <div className="stat-l1">{s.l1}</div>
+              <div className="stat-l2">{s.l2}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tech logos */}
+      <div className="tech-strip reveal">
+        <div className="title">Technologies I Work With</div>
+        <div className="logos">
+          {techLogos.map((t) => (
+            <span key={t.name} className="tech-logo">
+              <img
+                src={`https://cdn.simpleicons.org/${t.slug}/${t.color}`}
+                alt={t.name}
+                loading="lazy"
+              />
+              {t.name}
             </span>
           ))}
         </div>
-
-        <div className="flex flex-wrap gap-3">
-          <a
-            href="#projects"
-            className="btn btn-primary"
-            data-testid="cta-view-work"
-          >
-            View my work <ArrowRight size={16} />
-          </a>
-          <a
-            href="/cv.pdf"
-            download
-            className="btn btn-ghost"
-            data-testid="cta-download-cv"
-          >
-            <Download size={16} /> Download CV
-          </a>
-        </div>
-
-        <div className="flex items-center gap-4 mt-10">
-          <span
-            className="font-mono text-xs uppercase tracking-widest"
-            style={{ color: "var(--ink-soft)" }}
-          >
-            Connect
-          </span>
-          <span
-            className="h-px flex-1 max-w-[60px]"
-            style={{ background: "var(--border-strong)" }}
-          />
-          <a
-            href="https://www.linkedin.com/in/meghavijayabalan"
-            target="_blank"
-            rel="noreferrer"
-            className="chip"
-            data-testid="social-linkedin"
-          >
-            <Linkedin size={12} /> LinkedIn
-          </a>
-          <a
-            href="https://github.com/megharaj1997"
-            target="_blank"
-            rel="noreferrer"
-            className="chip"
-            data-testid="social-github"
-          >
-            <Github size={12} /> GitHub
-          </a>
-        </div>
       </div>
 
-      <div className="reveal relative" style={{ transitionDelay: "0.1s" }}>
-        <div className="portrait-stage" data-testid="hero-portrait">
-          <div className="portrait-halo" />
-          <div className="portrait-frame">
-            <div className="inner">
-              <img src="/images/profile.jpeg" alt="Megha Raj V S" />
-            </div>
-          </div>
-          <PortraitVortex />
-        </div>
-
-        {/* Floating badges around portrait */}
-        <div
-          className="hidden md:flex absolute top-2 -left-2 items-center gap-2 px-4 py-3 rounded-2xl"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-strong)",
-            backdropFilter: "blur(12px)",
-            boxShadow: "var(--shadow-md)",
-            zIndex: 5,
-          }}
-        >
-          <Cpu size={16} style={{ color: "var(--neuron-1)" }} />
-          <div>
-            <div className="font-mono text-[10px] opacity-60 uppercase">
-              Building
-            </div>
-            <div className="text-sm font-semibold">LLM Agents</div>
-          </div>
-        </div>
-
-        <div
-          className="hidden md:flex absolute bottom-2 -right-2 items-center gap-2 px-4 py-3 rounded-2xl"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-strong)",
-            backdropFilter: "blur(12px)",
-            boxShadow: "var(--shadow-md)",
-            zIndex: 5,
-          }}
-        >
-          <BarChart3 size={16} style={{ color: "var(--neuron-3)" }} />
-          <div>
-            <div className="font-mono text-[10px] opacity-60 uppercase">
-              Impact
-            </div>
-            <div className="text-sm font-semibold">10% revenue lift</div>
-          </div>
-        </div>
+      {/* Scroll hint */}
+      <div className="scroll-hint">
+        <div className="mouse" />
+        <span>Scroll to explore</span>
       </div>
-    </div>
-
-    {/* Stats strip */}
-    <div className="container-x z-content mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
-      {[
-        { n: "3+", l: "Years Experience" },
-        { n: "1.3+", l: "Years Data Scientist" },
-        { n: "10+", l: "Projects Delivered" },
-        { n: "15%+", l: "Business Impact" },
-      ].map((s) => (
-        <div key={s.l} className="stat-card">
-          <div className="num">{s.n}</div>
-          <div className="lbl">{s.l}</div>
-        </div>
-      ))}
     </div>
   </section>
 );
-
-const MarqueeStrip = () => {
-  const items = [
-    "Python",
-    "SQL",
-    "AWS",
-    "MongoDB",
-    "LangChain",
-    "OpenAI",
-    "Power BI",
-    "Docker",
-    "PyTorch",
-    "TensorFlow",
-  ];
-  const doubled = [...items, ...items];
-  return (
-    <div className="marquee" data-testid="tech-marquee">
-      <div className="marquee-track">
-        {doubled.map((t, i) => (
-          <span key={`${t}-${i}`}>{t}</span>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const About = () => {
   const tiltRef = useRef(null);
@@ -342,24 +344,6 @@ const About = () => {
             <img src="/images/about.jpg" alt="Megha Raj V S at work" />
             <div className="tilt-shine" />
           </div>
-          <div
-            className="mt-6 hidden md:inline-flex px-6 py-4 rounded-2xl font-mono text-xs"
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border-strong)",
-              backdropFilter: "blur(12px)",
-              boxShadow: "var(--shadow-md)",
-            }}
-          >
-            <div>
-              <div style={{ color: "var(--neuron-1)" }}>
-                {"> deep_learning.deploy()"}
-              </div>
-              <div style={{ color: "var(--ink-soft)" }}>
-                {"  status: production ✓"}
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="reveal">
@@ -390,10 +374,10 @@ const About = () => {
             mathematical imaging solutions.
           </p>
           <div className="flex flex-wrap gap-3 mt-8">
-            <a href="#contact" className="btn btn-primary">
-              <Send size={16} /> Hire me
+            <a href="#contact" className="btn-solid">
+              Hire me <Send size={16} />
             </a>
-            <a href="#journey" className="btn btn-ghost">
+            <a href="#experience" className="btn-outline">
               Read journey <ArrowRight size={16} />
             </a>
           </div>
@@ -530,10 +514,10 @@ const TimelineList = ({ items, testId }) => (
   </div>
 );
 
-const Journey = () => {
+const Experience = () => {
   const [tab, setTab] = useState("exp");
   return (
-    <section id="journey" className="section" data-testid="section-journey">
+    <section id="experience" className="section" data-testid="section-experience">
       <div className="grid-bg" />
       <div className="container-x z-content">
         <div className="reveal text-center max-w-2xl mx-auto">
@@ -559,7 +543,7 @@ const Journey = () => {
           ].map((t) => (
             <button
               key={t.id}
-              className={`btn ${tab === t.id ? "btn-primary" : "btn-ghost"}`}
+              className={tab === t.id ? "btn-solid" : "btn-outline"}
               onClick={() => setTab(t.id)}
               data-testid={`journey-tab-${t.id}`}
             >
@@ -630,6 +614,62 @@ const Journey = () => {
     </section>
   );
 };
+
+const Certificates = () => (
+  <section id="certificates" className="section" data-testid="section-certificates">
+    <div className="container-x z-content">
+      <div className="reveal text-center max-w-2xl mx-auto">
+        <span className="eyebrow">
+          <Trophy size={12} /> Credentials
+        </span>
+        <h2 className="section-title">
+          Certificates & <em>Recognitions</em>
+        </h2>
+        <p className="mt-4 text-base" style={{ color: "var(--ink-muted)" }}>
+          Professional certifications, bootcamps, publications, and academic
+          achievements.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+        {certifications.map((c) => (
+          <div key={c.title} className="card p-6 reveal">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{
+                  background: "color-mix(in srgb, var(--neuron-1) 12%, transparent)",
+                  color: "var(--neuron-1)",
+                }}
+              >
+                <Award size={20} />
+              </div>
+              <span className="chip">{c.tag}</span>
+            </div>
+            <h4
+              className="font-display text-lg mb-2"
+              style={{ color: "var(--ink)", lineHeight: 1.25 }}
+            >
+              {c.title}
+            </h4>
+            <div
+              className="text-sm"
+              style={{ color: "var(--ink-muted)" }}
+            >
+              {c.issuer}
+            </div>
+            <div
+              className="font-mono text-xs mt-3"
+              style={{ color: "var(--neuron-1)" }}
+            >
+              {c.year}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -775,7 +815,7 @@ const Contact = () => {
             </div>
             <button
               type="submit"
-              className="btn btn-primary w-full justify-center"
+              className="btn-solid w-full justify-center"
               data-testid="contact-submit"
             >
               <Send size={16} />{" "}
@@ -792,8 +832,8 @@ const Footer = () => (
   <footer className="footer" data-testid="site-footer">
     <div className="container-x z-content flex flex-wrap items-center justify-between gap-6">
       <div className="brand" style={{ padding: 0 }}>
+        <span>Megha Raj V S</span>
         <span className="brand-dot" />
-        Megha Raj V S
       </div>
       <div className="flex items-center gap-3">
         <a
@@ -830,16 +870,15 @@ const Portfolio = () => {
   useReveal();
   return (
     <div className="relative overflow-x-hidden">
-      <NeuralCanvas />
       <Nav />
       <main className="relative z-[1]">
         <Hero />
-        <MarqueeStrip />
         <About />
         <Achievements />
         <Skills />
         <Projects />
-        <Journey />
+        <Experience />
+        <Certificates />
         <Contact />
       </main>
       <Footer />
