@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import PortraitVortex from "@/components/PortraitVortex";
 import NeuralCanvas from "@/components/NeuralCanvas";
+import Chatbot from "@/components/Chatbot";
 import { useTheme } from "@/context/ThemeContext";
 import {
   experience,
@@ -677,18 +678,40 @@ const Certificates = () => (
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
-  const submit = (e) => {
+  // Set REACT_APP_FORMSPREE_ID in frontend/.env with your free Formspree form ID.
+  // Get one at https://formspree.io (50 free submissions/month).
+  const FORMSPREE_ID =
+    process.env.REACT_APP_FORMSPREE_ID || "your_formspree_id";
+  const FORMSPREE_URL = `https://formspree.io/f/${FORMSPREE_ID}`;
+
+  const submit = async (e) => {
     e.preventDefault();
-    const subject = encodeURIComponent(
-      `Portfolio contact from ${form.name || "you"}`
-    );
-    const body = encodeURIComponent(
-      `${form.message}\n\n— ${form.name} (${form.email})`
-    );
-    window.location.href = `mailto:megha042023@gmail.com?subject=${subject}&body=${body}`;
-    setSent(true);
+    setStatus("sending");
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          _subject: `Portfolio contact from ${form.name || "visitor"}`,
+        }),
+      });
+      if (res.ok) {
+        setStatus("sent");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
@@ -826,11 +849,35 @@ const Contact = () => {
             <button
               type="submit"
               className="btn-solid w-full justify-center"
+              disabled={status === "sending"}
               data-testid="contact-submit"
             >
               <Send size={16} />{" "}
-              {sent ? "Message drafted!" : "Send connection request"}
+              {status === "sending"
+                ? "Sending…"
+                : status === "sent"
+                  ? "Message sent ✓"
+                  : status === "error"
+                    ? "Failed — try again"
+                    : "Send connection request"}
             </button>
+            {status === "sent" && (
+              <p
+                className="text-xs mt-2 text-center"
+                style={{ color: "var(--neuron-1)" }}
+              >
+                Thanks! Megha will get back to you soon.
+              </p>
+            )}
+            {status === "error" && (
+              <p
+                className="text-xs mt-2 text-center"
+                style={{ color: "#ef4444" }}
+              >
+                Something went wrong. You can also reach her via WhatsApp or
+                email above.
+              </p>
+            )}
           </form>
         </div>
       </div>
@@ -908,6 +955,7 @@ const Portfolio = () => {
       </main>
       <Footer />
       <FloatingWhatsApp />
+      <Chatbot />
     </div>
   );
 };
