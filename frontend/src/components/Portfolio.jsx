@@ -301,7 +301,7 @@ const MarqueeStrip = () => {
     <div className="marquee" data-testid="tech-marquee">
       <div className="marquee-track">
         {doubled.map((t, i) => (
-          <span key={i}>{t}</span>
+          <span key={`${t}-${i}`}>{t}</span>
         ))}
       </div>
     </div>
@@ -421,8 +421,8 @@ const Achievements = () => (
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
-        {achievements.map((a, i) => (
-          <div key={i} className="card achievement reveal">
+        {achievements.map((a) => (
+          <div key={a.slice(0, 40)} className="card achievement reveal">
             <div className="icon">
               <Award size={20} />
             </div>
@@ -510,7 +510,7 @@ const TimelineList = ({ items, testId }) => (
   <div className="timeline" data-testid={testId}>
     {items.map((it, i) => (
       <div
-        key={i}
+        key={`${it.role}-${it.when}`}
         className="timeline-item reveal"
         style={{ transitionDelay: `${i * 0.05}s` }}
       >
@@ -521,8 +521,8 @@ const TimelineList = ({ items, testId }) => (
           {it.duration ? ` · ${it.duration}` : ""}
         </div>
         <ul className="single-bullet">
-          {it.bullets.map((b, k) => (
-            <li key={k}>{b}</li>
+          {it.bullets.map((b) => (
+            <li key={b.slice(0, 50)}>{b}</li>
           ))}
         </ul>
       </div>
