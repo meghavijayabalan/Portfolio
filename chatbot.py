@@ -1,17 +1,7 @@
 import os
 import re
-import io
 import base64
-import uuid
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')  # Headless matplotlib backend for thread safety
-import matplotlib.pyplot as plt
 import profile_data
-
-# Ensure generated graphs directory exists
-GENERATED_DIR = os.path.join(os.path.dirname(__file__), "static", "images", "generated")
-os.makedirs(GENERATED_DIR, exist_ok=True)
 
 # Compile regular expressions once at module load
 BUCKET_PATTERNS = {
@@ -31,135 +21,178 @@ BUCKET_PATTERNS = {
     "graph": re.compile(r"\b(graphs?|charts?|plots?|visualiz(e|ation)|draw|diagrams?)\b", re.IGNORECASE),
 }
 
-def fig_to_base64(fig):
-    img_buf = io.BytesIO()
-    fig.savefig(img_buf, format='png', dpi=150, facecolor='#0d1117')
-    img_buf.seek(0)
-    base64_str = base64.b64encode(img_buf.read()).decode('utf-8')
-    plt.close(fig)
-    return f"data:image/png;base64,{base64_str}"
-
 def generate_skills_graph():
     categories = ['LLMs & AI', 'Machine Learning', 'Data Eng', 'Languages', 'Databases', 'MLOps']
     scores = [95, 90, 85, 80, 80, 75]
     colors = ['#10b981', '#34d399', '#059669', '#6ee7b7', '#a7f3d0', '#047857']
     
-    fig = plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
-    ax = plt.axes()
-    ax.set_facecolor('#0d1117')
+    # SVG Dimensions
+    width = 500
+    height = 300
     
-    bars = ax.barh(categories, scores, color=colors, height=0.6)
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="100%">'
+    # Background
+    svg += f'<rect width="{width}" height="{height}" fill="#0d1117" rx="8"/>'
+    # Title
+    svg += '<text x="250" y="30" fill="#ffffff" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" text-anchor="middle">Megha\'s Skill Proficiency (%)</text>'
     
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color('#30363d')
-    ax.spines['bottom'].set_color('#30363d')
-    ax.tick_params(colors='#8b949e', labelsize=9)
-    ax.xaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
-    ax.set_axisbelow(True)
+    # Grid lines (at 25%, 50%, 75%, 100%)
+    for pct in [25, 50, 75, 100]:
+        x = 120 + (pct * 3.4)
+        svg += f'<line x1="{x}" y1="50" x2="{x}" y2="260" stroke="#30363d" stroke-dasharray="3,3" stroke-width="1"/>'
+        svg += f'<text x="{x}" y="275" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">{pct}%</text>'
     
-    plt.title("Megha's Skill Proficiency (%)", fontsize=11, color='#ffffff', pad=12, weight='bold')
-    plt.xlim(0, 100)
+    # Y-axis baseline line
+    svg += '<line x1="120" y1="50" x2="120" y2="260" stroke="#30363d" stroke-width="1"/>'
     
-    for bar in bars:
-        width = bar.get_width()
-        ax.text(width + 2, bar.get_y() + bar.get_height()/2, f'{int(width)}%', 
-                ha='left', va='center', color='#10b981', fontsize=8, weight='bold')
-                
-    plt.tight_layout()
-    return fig_to_base64(fig)
+    # Draw bars and labels
+    for i, (cat, score) in enumerate(zip(categories, scores)):
+        y = 55 + i * 34
+        color = colors[i]
+        bar_width = score * 3.4
+        
+        # Category Text
+        svg += f'<text x="110" y="{y + 14}" fill="#8b949e" font-family="system-ui, sans-serif" font-size="11" text-anchor="end" font-weight="500">{cat}</text>'
+        # Background bar
+        svg += f'<rect x="120" y="{y}" width="340" height="18" fill="#161b22" rx="3"/>'
+        # Foreground filled bar
+        svg += f'<rect x="120" y="{y}" width="{bar_width}" height="18" fill="{color}" rx="3"/>'
+        # Score label
+        svg += f'<text x="{120 + bar_width + 8}" y="{y + 13}" fill="#10b981" font-family="system-ui, sans-serif" font-size="10" font-weight="bold">{score}%</text>'
+        
+    svg += '</svg>'
+    
+    base64_str = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
+    return f"data:image/svg+xml;base64,{base64_str}"
 
 def generate_projects_graph():
     categories = ['AI Eng', 'Machine Learning', 'Data Eng', 'Operations', 'Academic']
     counts = [2, 3, 1, 1, 6]
     colors = ['#10b981', '#34d399', '#6ee7b7', '#059669', '#3b82f6']
     
-    fig = plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
-    ax = plt.axes()
-    ax.set_facecolor('#0d1117')
+    width = 500
+    height = 300
     
-    bars = ax.bar(categories, counts, color=colors, width=0.5)
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="100%">'
+    svg += f'<rect width="{width}" height="{height}" fill="#0d1117" rx="8"/>'
+    svg += '<text x="250" y="30" fill="#ffffff" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" text-anchor="middle">Portfolio Projects by Category</text>'
     
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color('#30363d')
-    ax.spines['bottom'].set_color('#30363d')
-    ax.tick_params(colors='#8b949e', labelsize=9)
-    ax.yaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
-    ax.set_axisbelow(True)
+    # Y-axis Grid lines (0 to 6)
+    for count in range(0, 8, 2):
+        y = 240 - (count * 28)
+        svg += f'<line x1="60" y1="{y}" x2="460" y2="{y}" stroke="#30363d" stroke-dasharray="3,3" stroke-width="1"/>'
+        svg += f'<text x="50" y="{y + 4}" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10" text-anchor="end">{count}</text>'
+        
+    # X-axis Baseline line
+    svg += '<line x1="60" y1="240" x2="460" y2="240" stroke="#30363d" stroke-width="1"/>'
     
-    plt.title("Portfolio Projects by Category", fontsize=11, color='#ffffff', pad=12, weight='bold')
-    plt.yticks(range(0, 8, 2))
+    # Draw bars and X labels
+    for i, (cat, count) in enumerate(zip(categories, counts)):
+        x = 80 + i * 78
+        color = colors[i]
+        bar_height = count * 28
+        y = 240 - bar_height
+        
+        # Filled bar
+        svg += f'<rect x="{x}" y="{y}" width="36" height="{bar_height}" fill="{color}" rx="3"/>'
+        # Value text on top of bar
+        svg += f'<text x="{x + 18}" y="{y - 6}" fill="#ffffff" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" text-anchor="middle">{count}</text>'
+        # Category label under bar
+        svg += f'<text x="{x + 18}" y="258" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">{cat}</text>'
+        
+    svg += '</svg>'
     
-    for bar in bars:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height + 0.1, f'{int(height)}', 
-                ha='center', va='bottom', color='#ffffff', fontsize=8, weight='bold')
-                
-    plt.tight_layout()
-    return fig_to_base64(fig)
+    base64_str = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
+    return f"data:image/svg+xml;base64,{base64_str}"
 
 def generate_timeline_graph():
-    roles = ['RPA Data Analyst\nSoftware Incubator', 'Data Science Intern\nChargeMOD', 'Data Scientist\nChargeMOD']
+    roles = ['RPA Analyst', 'Intern', 'Data Scientist']
     durations = [24, 3, 16] # in months
+    orgs = ['Software Incubator', 'ChargeMOD', 'ChargeMOD']
     colors = ['#3b82f6', '#6ee7b7', '#10b981']
     
-    fig = plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
-    ax = plt.axes()
-    ax.set_facecolor('#0d1117')
+    width = 500
+    height = 300
     
-    y_pos = np.arange(len(roles))
-    bars = ax.barh(y_pos, durations, color=colors, height=0.5)
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="100%">'
+    svg += f'<rect width="{width}" height="{height}" fill="#0d1117" rx="8"/>'
+    svg += '<text x="250" y="30" fill="#ffffff" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" text-anchor="middle">Experience Duration (Months)</text>'
     
-    ax.set_yticks(y_pos)
-    ax.set_yticklabels(roles, fontsize=8, color='#8b949e')
+    # Grid lines (at 6m, 12m, 18m, 24m)
+    for m in [6, 12, 18, 24]:
+        x = 160 + (m * 12)
+        svg += f'<line x1="{x}" y1="50" x2="{x}" y2="240" stroke="#30363d" stroke-dasharray="3,3" stroke-width="1"/>'
+        svg += f'<text x="{x}" y="255" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">{m}m</text>'
+        
+    # Baseline
+    svg += '<line x1="160" y1="50" x2="160" y2="240" stroke="#30363d" stroke-width="1"/>'
     
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color('#30363d')
-    ax.spines['bottom'].set_color('#30363d')
-    ax.tick_params(colors='#8b949e', labelsize=9)
-    ax.xaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
-    ax.set_axisbelow(True)
+    # Draw bars and text labels
+    for i, (role, duration, org) in enumerate(zip(roles, durations, orgs)):
+        y = 60 + i * 60
+        color = colors[i]
+        bar_width = duration * 12
+        
+        # Role Label
+        svg += f'<text x="150" y="{y + 6}" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" text-anchor="end" font-weight="bold">{role}</text>'
+        # Org Label
+        svg += f'<text x="150" y="{y + 20}" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10" text-anchor="end">{org}</text>'
+        # Background bar
+        svg += f'<rect x="160" y="{y}" width="288" height="18" fill="#161b22" rx="3"/>'
+        # Foreground filled bar
+        svg += f'<rect x="160" y="{y}" width="{bar_width}" height="18" fill="{color}" rx="3"/>'
+        # Value label
+        svg += f'<text x="{160 + bar_width + 8}" y="{y + 13}" fill="#ffffff" font-family="system-ui, sans-serif" font-size="10" font-weight="bold">{duration}m</text>'
+        
+    svg += '</svg>'
     
-    plt.title("Professional Experience Duration (Months)", fontsize=11, color='#ffffff', pad=12, weight='bold')
-    
-    for bar in bars:
-        width = bar.get_width()
-        ax.text(width + 0.5, bar.get_y() + bar.get_height()/2, f'{int(width)}m', 
-                ha='left', va='center', color='#ffffff', fontsize=8, weight='bold')
-                
-    plt.tight_layout()
-    return fig_to_base64(fig)
+    base64_str = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
+    return f"data:image/svg+xml;base64,{base64_str}"
 
 def generate_general_graph():
-    metrics = ['Featured\nProjects', 'Academic\nProjects', 'Experience\n(Years)', 'Research\nPubs', 'Certifications']
+    metrics = ['Featured Projs', 'Academic Projs', 'Exp (Years)', 'Research Pubs', 'Certifications']
     values = [6, 6, 3.5, 1, 4]
     colors = ['#10b981', '#34d399', '#6ee7b7', '#059669', '#3b82f6']
     
-    fig = plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
-    ax = plt.axes()
-    ax.set_facecolor('#0d1117')
+    width = 500
+    height = 300
     
-    bars = ax.bar(metrics, values, color=colors, width=0.45)
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="100%" height="100%">'
+    svg += f'<rect width="{width}" height="{height}" fill="#0d1117" rx="8"/>'
+    svg += '<text x="250" y="30" fill="#ffffff" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" text-anchor="middle">Megha\'s Profile Highlights</text>'
     
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color('#30363d')
-    ax.spines['bottom'].set_color('#30363d')
-    ax.tick_params(colors='#8b949e', labelsize=8)
-    ax.yaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
-    ax.set_axisbelow(True)
+    # Y-axis Grid lines (0 to 6)
+    for val in range(0, 8, 2):
+        y = 230 - (val * 24)
+        svg += f'<line x1="50" y1="{y}" x2="450" y2="{y}" stroke="#30363d" stroke-dasharray="3,3" stroke-width="1"/>'
+        svg += f'<text x="40" y="{y + 4}" fill="#8b949e" font-family="system-ui, sans-serif" font-size="10" text-anchor="end">{val}</text>'
+        
+    # Baseline
+    svg += '<line x1="50" y1="230" x2="450" y2="230" stroke="#30363d" stroke-width="1"/>'
     
-    plt.title("Megha's Profile Highlights", fontsize=11, color='#ffffff', pad=12, weight='bold')
+    # Draw bars and X labels
+    for i, (metric, value) in enumerate(zip(metrics, values)):
+        x = 70 + i * 78
+        color = colors[i]
+        bar_height = value * 24
+        y = 230 - bar_height
+        
+        # Filled bar
+        svg += f'<rect x="{x}" y="{y}" width="36" height="{bar_height}" fill="{color}" rx="3"/>'
+        # Value text on top of bar
+        svg += f'<text x="{x + 18}" y="{y - 6}" fill="#ffffff" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" text-anchor="middle">{value}</text>'
+        # Metric labels under bar (two lines if space-split)
+        parts = metric.split(' ')
+        if len(parts) > 1:
+            svg += f'<text x="{x + 18}" y="248" fill="#8b949e" font-family="system-ui, sans-serif" font-size="9" text-anchor="middle">{parts[0]}</text>'
+            svg += f'<text x="{x + 18}" y="260" fill="#8b949e" font-family="system-ui, sans-serif" font-size="9" text-anchor="middle">{parts[1]}</text>'
+        else:
+            svg += f'<text x="{x + 18}" y="248" fill="#8b949e" font-family="system-ui, sans-serif" font-size="9" text-anchor="middle">{metric}</text>'
+            
+    svg += '</svg>'
     
-    for bar in bars:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height + 0.1, f'{height}', 
-                ha='center', va='bottom', color='#ffffff', fontsize=8, weight='bold')
-                
-    plt.tight_layout()
-    return fig_to_base64(fig)
+    base64_str = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
+    return f"data:image/svg+xml;base64,{base64_str}"
 
 # Helper regex for additional on-topic checks
 ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
