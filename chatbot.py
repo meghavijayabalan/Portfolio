@@ -1,5 +1,7 @@
 import os
 import re
+import io
+import base64
 import uuid
 import numpy as np
 import matplotlib
@@ -29,15 +31,20 @@ BUCKET_PATTERNS = {
     "graph": re.compile(r"\b(graphs?|charts?|plots?|visualiz(e|ation)|draw|diagrams?)\b", re.IGNORECASE),
 }
 
+def fig_to_base64(fig):
+    img_buf = io.BytesIO()
+    fig.savefig(img_buf, format='png', dpi=150, facecolor='#0d1117')
+    img_buf.seek(0)
+    base64_str = base64.b64encode(img_buf.read()).decode('utf-8')
+    plt.close(fig)
+    return f"data:image/png;base64,{base64_str}"
+
 def generate_skills_graph():
-    filename = f"graph_skills_{uuid.uuid4().hex[:8]}.png"
-    filepath = os.path.join(GENERATED_DIR, filename)
-    
     categories = ['LLMs & AI', 'Machine Learning', 'Data Eng', 'Languages', 'Databases', 'MLOps']
     scores = [95, 90, 85, 80, 80, 75]
     colors = ['#10b981', '#34d399', '#059669', '#6ee7b7', '#a7f3d0', '#047857']
     
-    plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
+    fig = plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
     ax = plt.axes()
     ax.set_facecolor('#0d1117')
     
@@ -60,19 +67,14 @@ def generate_skills_graph():
                 ha='left', va='center', color='#10b981', fontsize=8, weight='bold')
                 
     plt.tight_layout()
-    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
-    plt.close()
-    return f"/static/images/generated/{filename}"
+    return fig_to_base64(fig)
 
 def generate_projects_graph():
-    filename = f"graph_projects_{uuid.uuid4().hex[:8]}.png"
-    filepath = os.path.join(GENERATED_DIR, filename)
-    
     categories = ['AI Eng', 'Machine Learning', 'Data Eng', 'Operations', 'Academic']
     counts = [2, 3, 1, 1, 6]
     colors = ['#10b981', '#34d399', '#6ee7b7', '#059669', '#3b82f6']
     
-    plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
+    fig = plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
     ax = plt.axes()
     ax.set_facecolor('#0d1117')
     
@@ -95,19 +97,14 @@ def generate_projects_graph():
                 ha='center', va='bottom', color='#ffffff', fontsize=8, weight='bold')
                 
     plt.tight_layout()
-    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
-    plt.close()
-    return f"/static/images/generated/{filename}"
+    return fig_to_base64(fig)
 
 def generate_timeline_graph():
-    filename = f"graph_timeline_{uuid.uuid4().hex[:8]}.png"
-    filepath = os.path.join(GENERATED_DIR, filename)
-    
     roles = ['RPA Data Analyst\nSoftware Incubator', 'Data Science Intern\nChargeMOD', 'Data Scientist\nChargeMOD']
     durations = [24, 3, 16] # in months
     colors = ['#3b82f6', '#6ee7b7', '#10b981']
     
-    plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
+    fig = plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
     ax = plt.axes()
     ax.set_facecolor('#0d1117')
     
@@ -133,19 +130,14 @@ def generate_timeline_graph():
                 ha='left', va='center', color='#ffffff', fontsize=8, weight='bold')
                 
     plt.tight_layout()
-    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
-    plt.close()
-    return f"/static/images/generated/{filename}"
+    return fig_to_base64(fig)
 
 def generate_general_graph():
-    filename = f"graph_overview_{uuid.uuid4().hex[:8]}.png"
-    filepath = os.path.join(GENERATED_DIR, filename)
-    
     metrics = ['Featured\nProjects', 'Academic\nProjects', 'Experience\n(Years)', 'Research\nPubs', 'Certifications']
     values = [6, 6, 3.5, 1, 4]
     colors = ['#10b981', '#34d399', '#6ee7b7', '#059669', '#3b82f6']
     
-    plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
+    fig = plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
     ax = plt.axes()
     ax.set_facecolor('#0d1117')
     
@@ -167,9 +159,7 @@ def generate_general_graph():
                 ha='center', va='bottom', color='#ffffff', fontsize=8, weight='bold')
                 
     plt.tight_layout()
-    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
-    plt.close()
-    return f"/static/images/generated/{filename}"
+    return fig_to_base64(fig)
 
 # Helper regex for additional on-topic checks
 ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
