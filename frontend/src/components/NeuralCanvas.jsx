@@ -28,22 +28,19 @@ const NeuralCanvas = () => {
     const colors =
       theme === "dark"
         ? {
-            node: "rgba(124, 156, 255, 0.85)",
-            nodeGlow: "rgba(124, 156, 255, 0.25)",
-            line: "rgba(124, 156, 255, ",
-            accent: "rgba(192, 132, 252, 0.9)",
-            accent2: "rgba(34, 211, 238, 0.9)",
+            node: "rgba(34, 255, 136, 0.9)",
+            nodeGlow: "rgba(34, 255, 136, 0.28)",
+            accent: "rgba(163, 255, 92, 0.9)",
+            accent2: "rgba(0, 224, 160, 0.9)",
           }
         : {
-            node: "rgba(79, 70, 229, 0.75)",
-            nodeGlow: "rgba(79, 70, 229, 0.18)",
-            line: "rgba(79, 70, 229, ",
-            accent: "rgba(245, 158, 11, 0.85)",
-            accent2: "rgba(14, 165, 164, 0.85)",
+            node: "rgba(16, 185, 129, 0.8)",
+            nodeGlow: "rgba(16, 185, 129, 0.22)",
+            accent: "rgba(132, 204, 22, 0.85)",
+            accent2: "rgba(34, 197, 94, 0.85)",
           };
 
-    const NODE_COUNT = Math.floor((width * height) / 22000);
-    const MAX_DIST = 150;
+    const NODE_COUNT = Math.floor((width * height) / 18000);
     const nodes = Array.from({ length: NODE_COUNT }).map((_, i) => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -114,27 +111,7 @@ const NeuralCanvas = () => {
         if (n.y > height) n.y = 0;
       }
 
-      // draw lines
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < MAX_DIST) {
-            const alpha = (1 - d / MAX_DIST) * 0.55;
-            ctx.strokeStyle = colors.line + alpha + ")";
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // draw nodes with soft glow
+      // draw nodes with soft glow (no connecting lines)
       for (const n of nodes) {
         const scale = 1 + Math.sin(n.pulse) * 0.25;
         const r = n.r * scale;

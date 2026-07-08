@@ -18,16 +18,18 @@ Enhance the existing portfolio (https://portfolio-megha-vijayabalan.vercel.app/)
 ## Implemented (Jan 2026)
 - Full rebuild in `/app/frontend/src/`:
   - `components/Portfolio.jsx` — main page (Hero, Marquee, About, Achievements, Skills, Projects, Journey, Contact, Footer)
-  - `components/NeuralCanvas.jsx` — animated neuron network background canvas with mouse gravity, dynamic node/line colors per theme
+  - `components/NeuralCanvas.jsx` — animated glowing particle background (lines removed per user request)
+  - `components/PortraitVortex.jsx` — dense green particle swirl orbiting around the portrait (vein-green energy field)
   - `context/ThemeContext.js` — theme provider persisting to localStorage
-  - `data/portfolio.js` — all copy (experience, education, publications, projects, achievements, skills, values)
-  - `index.css` — complete design system with CSS variables for both dark & light themes
-- Neuron theme graphics: animated neural network canvas + floating gradient blobs + orbital dots around portrait + rotating conic-gradient border + grid pattern overlay + tech marquee
-- Portrait styled with 3D frame, rotating gradient border, hover zoom, glare and floating "Building LLM Agents" / "10% revenue lift" badges
-- Brand replaced: "Megha Raj V S" everywhere (nav, footer, meta)
-- Light theme menu bar: glassmorphism pill nav with warm off-white surface, indigo accents, high contrast text
-- Custom `.single-bullet` list class ensures ONE bullet marker per list item across Projects & Journey (Education)
-- Fully responsive with mobile hamburger nav
+  - `data/portfolio.js` — all copy
+  - `index.css` — complete design system with vein-green CSS variables for both dark & light themes
+
+### Iteration 2 (Vein-Green update)
+- Palette switched from indigo/violet to vein-neon green (dark: #22ff88 / #a3ff5c / #00e0a0; light: emerald #10b981 / #22c55e / #84cc16)
+- Removed all connecting synapse lines from the background neural canvas — only glowing green particles remain
+- Portrait now frameless: radial mask fades the photo edges into the page background, with a soft pulsing green halo behind and a swirling `PortraitVortex` particle orbit around it (matches user's reference screenshot)
+- About-Me image is now a fully 3D interactive tilt (rotateX/Y follows cursor with translateZ pop-out and green sheen)
+- Added `Download CV` button in hero → `/cv.pdf` (placeholder file at `/app/frontend/public/cv.pdf` — user should replace with real PDF)
 
 ## User Personas
 - Recruiters / hiring managers evaluating an AI/Data Science candidate

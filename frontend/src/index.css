@@ -12,55 +12,55 @@
 
 :root,
 .light {
-    --bg: #f4f1ea; /* warm off-white */
+    --bg: #f2f6f0; /* warm off-white with green cast */
     --bg-soft: #ffffff;
     --surface: #ffffffcc;
-    --surface-2: #ede8dd;
-    --ink: #1a1a2e;
-    --ink-muted: #4a4a63;
-    --ink-soft: #6b6b82;
-    --border: #d9d3c6;
-    --border-strong: #b8b1a0;
+    --surface-2: #e6ede2;
+    --ink: #0f1f16;
+    --ink-muted: #3d5044;
+    --ink-soft: #5f7367;
+    --border: #cdd8ca;
+    --border-strong: #a6b6a1;
 
-    --neuron-1: #4f46e5; /* indigo */
-    --neuron-2: #0ea5a4; /* teal */
-    --neuron-3: #f59e0b; /* amber */
-    --neuron-glow: rgba(79, 70, 229, 0.35);
-    --neuron-line: rgba(79, 70, 229, 0.22);
-    --grid-line: rgba(26, 26, 46, 0.06);
+    --neuron-1: #10b981; /* emerald */
+    --neuron-2: #22c55e; /* green */
+    --neuron-3: #84cc16; /* lime */
+    --neuron-glow: rgba(16, 185, 129, 0.35);
+    --neuron-line: rgba(16, 185, 129, 0.22);
+    --grid-line: rgba(15, 31, 22, 0.06);
 
-    --nav-bg: rgba(255, 255, 255, 0.72);
-    --nav-border: rgba(26, 26, 46, 0.08);
-    --nav-ink: #1a1a2e;
+    --nav-bg: rgba(255, 255, 255, 0.75);
+    --nav-border: rgba(15, 31, 22, 0.08);
+    --nav-ink: #0f1f16;
 
-    --shadow-lg: 0 30px 60px -20px rgba(26, 26, 46, 0.18);
-    --shadow-md: 0 12px 30px -12px rgba(26, 26, 46, 0.15);
+    --shadow-lg: 0 30px 60px -20px rgba(15, 31, 22, 0.18);
+    --shadow-md: 0 12px 30px -12px rgba(15, 31, 22, 0.15);
 }
 
 .dark {
-    --bg: #05070f; /* deep space */
-    --bg-soft: #0a0e1c;
-    --surface: rgba(16, 22, 42, 0.65);
-    --surface-2: rgba(20, 28, 52, 0.7);
-    --ink: #e8ecff;
-    --ink-muted: #a5b0d1;
-    --ink-soft: #6f7ba0;
-    --border: rgba(120, 145, 210, 0.16);
-    --border-strong: rgba(120, 145, 210, 0.32);
+    --bg: #030706; /* deep near-black with green undertone */
+    --bg-soft: #06110c;
+    --surface: rgba(10, 26, 18, 0.55);
+    --surface-2: rgba(14, 32, 22, 0.7);
+    --ink: #e6ffef;
+    --ink-muted: #a8d4b8;
+    --ink-soft: #6c9080;
+    --border: rgba(72, 220, 130, 0.14);
+    --border-strong: rgba(72, 220, 130, 0.32);
 
-    --neuron-1: #7c9cff; /* electric blue */
-    --neuron-2: #22d3ee; /* cyan */
-    --neuron-3: #c084fc; /* violet */
-    --neuron-glow: rgba(124, 156, 255, 0.55);
-    --neuron-line: rgba(124, 156, 255, 0.28);
-    --grid-line: rgba(140, 170, 230, 0.06);
+    --neuron-1: #22ff88; /* vein neon green */
+    --neuron-2: #00e0a0; /* teal green */
+    --neuron-3: #a3ff5c; /* lime accent */
+    --neuron-glow: rgba(34, 255, 136, 0.55);
+    --neuron-line: rgba(34, 255, 136, 0.28);
+    --grid-line: rgba(72, 220, 130, 0.06);
 
-    --nav-bg: rgba(8, 12, 26, 0.6);
-    --nav-border: rgba(120, 145, 210, 0.18);
-    --nav-ink: #e8ecff;
+    --nav-bg: rgba(4, 12, 8, 0.7);
+    --nav-border: rgba(72, 220, 130, 0.2);
+    --nav-ink: #e6ffef;
 
-    --shadow-lg: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
-    --shadow-md: 0 12px 30px -12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 30px 60px -20px rgba(0, 0, 0, 0.75);
+    --shadow-md: 0 12px 30px -12px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -343,108 +343,135 @@ body {
     z-index: 0;
 }
 
-/* Hero portrait frame */
+/* Hero portrait — frameless, blends into background with green particle vortex */
+.portrait-stage {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    perspective: 1200px;
+}
 .portrait-frame {
     position: relative;
     width: 100%;
-    max-width: 440px;
-    aspect-ratio: 3 / 4;
-    margin: 0 auto;
-    border-radius: 24px;
-    overflow: hidden;
+    height: 100%;
     transform-style: preserve-3d;
-    perspective: 1000px;
-}
-.portrait-frame::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    border-radius: 26px;
-    background: conic-gradient(
-        from 0deg,
-        var(--neuron-1),
-        var(--neuron-2),
-        var(--neuron-3),
-        var(--neuron-1)
-    );
-    z-index: 0;
-    animation: rotate-border 8s linear infinite;
-    opacity: 0.9;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .portrait-frame .inner {
     position: absolute;
-    inset: 4px;
-    border-radius: 22px;
+    inset: 8%;
+    z-index: 2;
+    border-radius: 50%;
     overflow: hidden;
-    background: var(--bg-soft);
-    z-index: 1;
-    box-shadow: var(--shadow-lg);
+    /* Radial mask fades the photo edges into the page background */
+    -webkit-mask-image: radial-gradient(
+        circle at 50% 45%,
+        #000 44%,
+        rgba(0, 0, 0, 0.85) 55%,
+        rgba(0, 0, 0, 0.35) 72%,
+        transparent 92%
+    );
+    mask-image: radial-gradient(
+        circle at 50% 45%,
+        #000 44%,
+        rgba(0, 0, 0, 0.85) 55%,
+        rgba(0, 0, 0, 0.35) 72%,
+        transparent 92%
+    );
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
 }
 .portrait-frame .inner img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    /* subtle green-tinted grade to match neon theme */
+    filter: contrast(1.08) saturate(1.05) brightness(0.98);
+    transform: scale(1.05);
     transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-    filter: contrast(1.05) saturate(1.05);
 }
 .portrait-frame:hover .inner img {
-    transform: scale(1.06);
+    transform: scale(1.1);
 }
-.portrait-frame .glare {
+/* Soft green halo behind portrait */
+.portrait-halo {
     position: absolute;
-    inset: 4px;
-    border-radius: 22px;
+    inset: -8%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at center,
+        color-mix(in srgb, var(--neuron-1) 40%, transparent) 0%,
+        color-mix(in srgb, var(--neuron-1) 12%, transparent) 40%,
+        transparent 70%
+    );
+    filter: blur(30px);
+    z-index: 0;
+    animation: halo-pulse 4s ease-in-out infinite;
+}
+@keyframes halo-pulse {
+    0%,
+    100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+}
+/* Vortex canvas layer sits between halo and photo, and above photo edges */
+.portrait-vortex {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* 3D tilt about image */
+.about-3d {
+    perspective: 1200px;
+}
+.about-3d .tilt-target {
+    transform-style: preserve-3d;
+    transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+        0 40px 80px -30px rgba(0, 0, 0, 0.6),
+        0 0 60px -20px var(--neuron-glow);
+    position: relative;
+}
+.about-3d .tilt-target::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    border: 1px solid color-mix(in srgb, var(--neuron-1) 30%, transparent);
+    pointer-events: none;
+    z-index: 3;
+}
+.about-3d img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: translateZ(0);
+}
+.about-3d .tilt-shine {
+    position: absolute;
+    inset: 0;
     background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.12) 0%,
-        transparent 40%
+        rgba(34, 255, 136, 0.14) 0%,
+        transparent 45%,
+        transparent 60%,
+        rgba(34, 255, 136, 0.08) 100%
     );
     z-index: 2;
     pointer-events: none;
-}
-@keyframes rotate-border {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Orbit dots around portrait */
-.portrait-orbit {
-    position: absolute;
-    inset: -30px;
-    z-index: 3;
-    pointer-events: none;
-    animation: orbit 30s linear infinite;
-}
-.portrait-orbit .dot {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--neuron-2);
-    box-shadow: 0 0 20px var(--neuron-2);
-}
-.portrait-orbit .dot.d1 {
-    top: 10%;
-    left: -8px;
-}
-.portrait-orbit .dot.d2 {
-    top: 55%;
-    right: -8px;
-    background: var(--neuron-3);
-    box-shadow: 0 0 20px var(--neuron-3);
-}
-.portrait-orbit .dot.d3 {
-    bottom: 10%;
-    left: 30%;
-    background: var(--neuron-1);
-    box-shadow: 0 0 20px var(--neuron-1);
-}
-@keyframes orbit {
-    to {
-        transform: rotate(360deg);
-    }
+    mix-blend-mode: screen;
 }
 
 /* Stat card */

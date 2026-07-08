@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Menu,
   X,
@@ -24,6 +24,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import NeuralCanvas from "@/components/NeuralCanvas";
+import PortraitVortex from "@/components/PortraitVortex";
 import { useTheme } from "@/context/ThemeContext";
 import {
   experience,
@@ -172,11 +173,12 @@ const Hero = () => (
             View my work <ArrowRight size={16} />
           </a>
           <a
-            href="mailto:megha042023@gmail.com"
+            href="/cv.pdf"
+            download
             className="btn btn-ghost"
-            data-testid="cta-hire"
+            data-testid="cta-download-cv"
           >
-            <Download size={16} /> Get in touch
+            <Download size={16} /> Download CV
           </a>
         </div>
 
@@ -213,26 +215,25 @@ const Hero = () => (
       </div>
 
       <div className="reveal relative" style={{ transitionDelay: "0.1s" }}>
-        <div className="portrait-frame" data-testid="hero-portrait">
-          <div className="portrait-orbit">
-            <span className="dot d1" />
-            <span className="dot d2" />
-            <span className="dot d3" />
+        <div className="portrait-stage" data-testid="hero-portrait">
+          <div className="portrait-halo" />
+          <div className="portrait-frame">
+            <div className="inner">
+              <img src="/images/profile.jpeg" alt="Megha Raj V S" />
+            </div>
           </div>
-          <div className="inner">
-            <img src="/images/profile.jpeg" alt="Megha Raj V S" />
-          </div>
-          <div className="glare" />
+          <PortraitVortex />
         </div>
 
         {/* Floating badges around portrait */}
         <div
-          className="hidden md:flex absolute -top-4 -left-4 items-center gap-2 px-4 py-3 rounded-2xl"
+          className="hidden md:flex absolute top-2 -left-2 items-center gap-2 px-4 py-3 rounded-2xl"
           style={{
             background: "var(--surface)",
             border: "1px solid var(--border-strong)",
             backdropFilter: "blur(12px)",
             boxShadow: "var(--shadow-md)",
+            zIndex: 5,
           }}
         >
           <Cpu size={16} style={{ color: "var(--neuron-1)" }} />
@@ -245,12 +246,13 @@ const Hero = () => (
         </div>
 
         <div
-          className="hidden md:flex absolute -bottom-4 -right-4 items-center gap-2 px-4 py-3 rounded-2xl"
+          className="hidden md:flex absolute bottom-2 -right-2 items-center gap-2 px-4 py-3 rounded-2xl"
           style={{
             background: "var(--surface)",
             border: "1px solid var(--border-strong)",
             backdropFilter: "blur(12px)",
             boxShadow: "var(--shadow-md)",
+            zIndex: 5,
           }}
         >
           <BarChart3 size={16} style={{ color: "var(--neuron-3)" }} />
@@ -306,85 +308,100 @@ const MarqueeStrip = () => {
   );
 };
 
-const About = () => (
-  <section id="about" className="section" data-testid="section-about">
-    <div className="grid-bg" />
-    <div className="container-x z-content grid md:grid-cols-2 gap-16 items-center">
-      <div className="reveal relative">
-        <div
-          className="rounded-3xl overflow-hidden relative"
-          style={{ boxShadow: "var(--shadow-lg)" }}
-        >
-          <img
-            src="/images/about.jpg"
-            alt="Megha Raj V S at work"
-            className="w-full h-auto block"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(200deg, transparent 40%, color-mix(in srgb, var(--neuron-1) 15%, transparent))",
-            }}
-          />
-        </div>
-        <div
-          className="absolute -bottom-6 -right-6 hidden md:block px-6 py-4 rounded-2xl font-mono text-xs"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-strong)",
-            backdropFilter: "blur(12px)",
-            boxShadow: "var(--shadow-md)",
-          }}
-        >
-          <div style={{ color: "var(--neuron-1)" }}>
-            {"> deep_learning.deploy()"}
-          </div>
-          <div style={{ color: "var(--ink-soft)" }}>
-            {"  status: production ✓"}
-          </div>
-        </div>
-      </div>
+const About = () => {
+  const tiltRef = useRef(null);
 
-      <div className="reveal">
-        <span className="eyebrow">
-          <BrainCircuit size={12} /> About Me
-        </span>
-        <h2 className="section-title">
-          Bridging <em>Data</em> & Cognition
-        </h2>
-        <p
-          className="mt-6 text-base leading-relaxed"
-          style={{ color: "var(--ink-muted)" }}
-        >
-          I am a passionate Data Scientist and AI Engineer with a solid
-          grounding in Digital Image Computing. My expertise lies in designing
-          deep neural architectures and optimization frameworks — making deep
-          learning accessible, resource-efficient, and practical for production
-          deployment.
-        </p>
-        <p
-          className="mt-4 text-base leading-relaxed"
-          style={{ color: "var(--ink-muted)" }}
-        >
-          My career reflects a deliberate transition: from Automation (RPA) &
-          Data Analysis — building software robots and optimizing backend
-          workflows — into Deep Learning & Computer Vision, designing
-          spatiotemporal networks for visual speech recognition and advanced
-          mathematical imaging solutions.
-        </p>
-        <div className="flex flex-wrap gap-3 mt-8">
-          <a href="#contact" className="btn btn-primary">
-            <Send size={16} /> Hire me
-          </a>
-          <a href="#journey" className="btn btn-ghost">
-            Read journey <ArrowRight size={16} />
-          </a>
+  const onMove = (e) => {
+    const el = tiltRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    const rotX = -y * 14;
+    const rotY = x * 18;
+    el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(20px)`;
+  };
+  const onLeave = () => {
+    if (tiltRef.current)
+      tiltRef.current.style.transform =
+        "rotateX(0deg) rotateY(0deg) translateZ(0)";
+  };
+
+  return (
+    <section id="about" className="section" data-testid="section-about">
+      <div className="grid-bg" />
+      <div className="container-x z-content grid md:grid-cols-2 gap-16 items-center">
+        <div className="reveal about-3d">
+          <div
+            ref={tiltRef}
+            className="tilt-target"
+            onMouseMove={onMove}
+            onMouseLeave={onLeave}
+            data-testid="about-3d-image"
+          >
+            <img src="/images/about.jpg" alt="Megha Raj V S at work" />
+            <div className="tilt-shine" />
+          </div>
+          <div
+            className="mt-6 hidden md:inline-flex px-6 py-4 rounded-2xl font-mono text-xs"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border-strong)",
+              backdropFilter: "blur(12px)",
+              boxShadow: "var(--shadow-md)",
+            }}
+          >
+            <div>
+              <div style={{ color: "var(--neuron-1)" }}>
+                {"> deep_learning.deploy()"}
+              </div>
+              <div style={{ color: "var(--ink-soft)" }}>
+                {"  status: production ✓"}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="reveal">
+          <span className="eyebrow">
+            <BrainCircuit size={12} /> About Me
+          </span>
+          <h2 className="section-title">
+            Bridging <em>Data</em> & Cognition
+          </h2>
+          <p
+            className="mt-6 text-base leading-relaxed"
+            style={{ color: "var(--ink-muted)" }}
+          >
+            I am a passionate Data Scientist and AI Engineer with a solid
+            grounding in Digital Image Computing. My expertise lies in designing
+            deep neural architectures and optimization frameworks — making deep
+            learning accessible, resource-efficient, and practical for
+            production deployment.
+          </p>
+          <p
+            className="mt-4 text-base leading-relaxed"
+            style={{ color: "var(--ink-muted)" }}
+          >
+            My career reflects a deliberate transition: from Automation (RPA) &
+            Data Analysis — building software robots and optimizing backend
+            workflows — into Deep Learning & Computer Vision, designing
+            spatiotemporal networks for visual speech recognition and advanced
+            mathematical imaging solutions.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-8">
+            <a href="#contact" className="btn btn-primary">
+              <Send size={16} /> Hire me
+            </a>
+            <a href="#journey" className="btn btn-ghost">
+              Read journey <ArrowRight size={16} />
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const Achievements = () => (
   <section
