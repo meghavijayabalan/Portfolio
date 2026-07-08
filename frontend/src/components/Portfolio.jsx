@@ -323,90 +323,13 @@ const Hero = () => (
 );
 
 const About = () => {
-  const tiltRef = useRef(null);
-  const sceneRef = useRef(null);
-
-  const onMove = (e) => {
-    const el = tiltRef.current;
-    const scene = sceneRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    const rotX = -y * 14;
-    const rotY = x * 18;
-    el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(20px)`;
-    // Parallax the floating orbs / badges the opposite way for depth
-    if (scene) {
-      const orbs = scene.querySelectorAll(".about-orb, .about-badge");
-      orbs.forEach((o, i) => {
-        const depth = 20 + (i % 4) * 10;
-        o.style.transform = `translate3d(${-x * depth}px, ${-y * depth}px, 0)`;
-      });
-    }
-  };
-  const onLeave = () => {
-    if (tiltRef.current)
-      tiltRef.current.style.transform =
-        "rotateX(0deg) rotateY(0deg) translateZ(0)";
-    if (sceneRef.current) {
-      sceneRef.current
-        .querySelectorAll(".about-orb, .about-badge")
-        .forEach((o) => (o.style.transform = ""));
-    }
-  };
-
   return (
     <section id="about" className="section" data-testid="section-about">
       <div className="grid-bg" />
       <div className="container-x z-content grid md:grid-cols-2 gap-16 items-center">
-        <div className="reveal about-3d">
-          <div
-            ref={sceneRef}
-            className="about-scene"
-            onMouseMove={onMove}
-            onMouseLeave={onLeave}
-          >
-            <div
-              ref={tiltRef}
-              className="tilt-target"
-              data-testid="about-3d-image"
-            >
-              <img src="/images/about.jpg" alt="Megha Raj V S at work" />
-              <div className="tilt-shine" />
-            </div>
-            <span className="about-orb o1" />
-            <span className="about-orb o2" />
-            <span className="about-orb o3" />
-            <span className="about-orb o4" />
-            <div className="about-badge b-top">
-              <span className="dot" />
-              <div>
-                <div
-                  className="font-mono text-[10px] uppercase tracking-widest"
-                  style={{ color: "var(--ink-soft)" }}
-                >
-                  Now
-                </div>
-                <div className="font-semibold text-sm">
-                  Shipping LLM agents
-                </div>
-              </div>
-            </div>
-            <div className="about-badge b-bot">
-              <BrainCircuit size={16} style={{ color: "var(--neuron-1)" }} />
-              <div>
-                <div
-                  className="font-mono text-[10px] uppercase tracking-widest"
-                  style={{ color: "var(--ink-soft)" }}
-                >
-                  Focus
-                </div>
-                <div className="font-semibold text-sm">
-                  Deep Learning · CV
-                </div>
-              </div>
-            </div>
+        <div className="reveal">
+          <div className="about-plain" data-testid="about-image">
+            <img src="/images/about.jpg" alt="Megha Raj V S at work" />
           </div>
         </div>
 

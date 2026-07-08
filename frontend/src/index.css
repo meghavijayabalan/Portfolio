@@ -262,6 +262,19 @@ body {
     opacity: 0.55;
 }
 
+/* Plain (non-3D) about image container */
+.about-plain {
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-md);
+}
+.about-plain img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 /* 3D about image with floating depth orbs */
 .about-scene {
     position: relative;
