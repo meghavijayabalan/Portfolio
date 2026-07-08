@@ -11,16 +11,19 @@ const renderMarkdownLite = (text) => {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((p, i) => {
     if (p.startsWith("**") && p.endsWith("**")) {
-      return <strong key={i}>{p.slice(2, -2)}</strong>;
+      return <strong key={`b-${i}-${p}`}>{p.slice(2, -2)}</strong>;
     }
-    return <span key={i}>{p}</span>;
+    return <span key={`s-${i}-${p}`}>{p}</span>;
   });
 };
 
 const Chatbot = () => {
   const [open, setOpen] = useState(false);
+  const nextIdRef = useRef(1);
+  const makeId = () => `m-${nextIdRef.current++}`;
   const [msgs, setMsgs] = useState([
     {
+      id: makeId(),
       role: "bot",
       text: "Hi! 👋 I'm Megha's AI assistant. Ask me anything about her skills, projects, experience, or how to reach her.",
       suggestions: defaultSuggestions,
@@ -45,7 +48,7 @@ const Chatbot = () => {
     const q = (queryOverride ?? input).trim();
     if (!q) return;
 
-    const userMsg = { role: "user", text: q };
+    const userMsg = { id: makeId(), role: "user", text: q };
     setMsgs((m) => [...m, userMsg]);
     setInput("");
     setThinking(true);
@@ -54,6 +57,7 @@ const Chatbot = () => {
     window.setTimeout(() => {
       const found = findAnswer(q);
       const botMsg = {
+        id: makeId(),
         role: "bot",
         text: found.answer,
         suggestions: found.suggestions || [],
@@ -107,11 +111,11 @@ const Chatbot = () => {
         </div>
 
         <div className="chatbot-body" ref={bodyRef} data-testid="chatbot-body">
-          {msgs.map((m, i) => (
-            <div key={i} className={`chatbot-msg is-${m.role}`}>
+          {msgs.map((m) => (
+            <div key={m.id} className={`chatbot-msg is-${m.role}`}>
               <div className="chatbot-bubble">
                 {m.text.split("\n").map((line, j) => (
-                  <p key={j}>{renderMarkdownLite(line)}</p>
+                  <p key={`${m.id}-l${j}`}>{renderMarkdownLite(line)}</p>
                 ))}
               </div>
               {m.role === "bot" && m.suggestions && m.suggestions.length > 0 && (
