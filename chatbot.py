@@ -409,6 +409,26 @@ def get_chat_response(message: str) -> str:
 
     # 11. SOCIALS
     elif best_bucket == "socials":
+        if any(kw in message_lc for kw in ["insta", "instagram", "ig"]):
+            return (
+                "Megha Raj V S's Instagram profile is: "
+                "[megha_vijayabalan](https://www.instagram.com/megha_vijayabalan?igsh=dzAxbnVkczBzNHBs)"
+            )
+        elif any(kw in message_lc for kw in ["linkedin", "ln"]):
+            return (
+                f"Megha Raj V S's LinkedIn profile is: "
+                f"[{profile_data.PROFILE['linkedin']}]({profile_data.PROFILE['linkedin']})"
+            )
+        elif any(kw in message_lc for kw in ["github", "git"]):
+            return (
+                f"Megha Raj V S's GitHub profile is: "
+                f"[{profile_data.PROFILE['github']}]({profile_data.PROFILE['github']})"
+            )
+        elif any(kw in message_lc for kw in ["facebook", "fb"]):
+            return (
+                "Megha Raj V S's Facebook profile is: "
+                "[megha_vijayabalan](https://www.facebook.com/share/1871xeJjCH/)"
+            )
         return (
             f"Here are Megha Raj V S's social media profiles:\n"
             f"- **LinkedIn**: [{profile_data.PROFILE['linkedin']}]({profile_data.PROFILE['linkedin']})\n"
