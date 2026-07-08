@@ -198,6 +198,19 @@ def generate_general_graph():
 # Helper regex for additional on-topic checks
 ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
 
+TECH_DESCRIPTIONS = {
+    "machine learning": "Machine learning is the branch of artificial intelligence focused on building systems that learn from data, identify patterns, and make decisions with minimal human intervention.",
+    "llms & ai systems": "Large Language Models (LLMs) and Agentic AI Systems utilize advanced generative AI models (like GPT-4 or Claude) designed to reason, plan, execute API tools, and handle complex conversational workflows.",
+    "data engineering": "Data engineering is the practice of designing, building, and maintaining serverless data pipelines, data warehouses, and ETL (Extract, Transform, Load) systems to handle millions of transactions at scale.",
+    "mlops": "MLOps (Machine Learning Operations) applies DevOps principles to ML workflows, ensuring model reliability, regression testing, deployment health gates, rate limiting, and caching in production environments.",
+    "langchain": "LangChain is a popular open-source orchestration framework designed to simplify the creation of applications using Large Language Models (LLMs).",
+    "langgraph": "LangGraph is a library for building stateful, multi-actor agentic applications with LLMs, enabling complex cyclical flows, loops, and branching logic.",
+    "rag": "RAG (Retrieval-Augmented Generation) is an architecture that optimizes LLM output by querying an external knowledge vector database (like ChromaDB) and cross-encoder reranking before generating a response.",
+    "pyspark": "PySpark is the Python API for Apache Spark, a distributed general-purpose cluster-computing framework used for processing millions of rows of data concurrently in parallel pipelines.",
+    "aws glue": "AWS Glue is a fully managed, serverless event-driven ETL service that prepares, transforms, and loads data from operational datastores (like MongoDB) to analytics data lakes (S3 Parquet).",
+    "xgboost": "XGBoost (Extreme Gradient Boosting) is an optimized, highly efficient, and flexible gradient boosting library widely used for tabular classification and regression forecasting."
+}
+
 def explain_skill_or_keyword(message: str) -> str:
     message_lc = message.lower()
     
@@ -246,7 +259,12 @@ def explain_skill_or_keyword(message: str) -> str:
             matching_exp.append((exp, matching_bullets))
             
     if matching_projects or matching_exp:
-        response = f"Megha Raj V S has direct hands-on experience with **{best_tech}** in the following areas of her work:\n\n"
+        desc = TECH_DESCRIPTIONS.get(best_tech.lower(), "")
+        if desc:
+            response = f"**What is {best_tech}?**\n{desc}\n\nMegha Raj V S has direct hands-on experience with **{best_tech}** in the following areas of her work:\n\n"
+        else:
+            response = f"Megha Raj V S has direct hands-on experience with **{best_tech}** in the following areas of her work:\n\n"
+            
         if matching_projects:
             proj_list = []
             for p in matching_projects:
