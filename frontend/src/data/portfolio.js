@@ -5,13 +5,9 @@ export const experience = [
     org: "ChargeMOD",
     duration: "1.3+ Years",
     bullets: [
-      "Architected a modular monolith support platform with a three-path LLM reasoning pipeline (log-based diagnosis, hybrid BM25 + ChromaDB RAG with cross-encoder reranking, dynamic guided questioning), reducing average issue resolution time by ~50%.",
-      "Built an entity-cache validation layer that verifies all charger IDs and wallet balances against live API responses before LLM injection, structurally preventing hallucination in a safety-critical environment.",
-      "Designed a conversational analytics agent for 6,000+ EV station owners using LLM tool-calling over 15-20 parameterized PostgreSQL query functions; serving 1,700+ daily active users.",
-      "Built a nightly two-level ML pricing pipeline with network-wide demand forecasting (XGBoost, Random Forest, Facebook Prophet) delivering ~10% revenue uplift.",
-      "Designed a nightly AWS Glue + S3 Parquet + Athena serverless pipeline processing 1M+ transactions nightly; date partitioning cut cloud query costs by ~95%.",
-      "Built a monthly churn detection system with rolling-percentile lifecycle clustering and a proactive calling console for customer care teams.",
-      "Built a nightly Python batch job for gap-based uptime/downtime monitoring, contributing to ~20% reduction in operational downtime.",
+      "Lead AI and machine learning development, architecting production-grade LLM agents, dynamic demand forecasting networks, and automated serverless ETL data pipelines.",
+      "Deploy anti-hallucination guardrails, Redis query caching, and robust security measures structurally preventing cross-account access at the database layer.",
+      "Design daily Power BI dashboard streams and automated diagnostic monitoring consoles, cutting cloud costs by 95% and operational downtime by 20%."
     ],
   },
   {
@@ -80,6 +76,49 @@ export const publications = [
 ];
 
 export const projects = [
+  {
+    tag: "Data Engineering",
+    title: "Power BI Dashboard & ETL Pipeline",
+    desc: "A nightly serverless data pipeline and dashboard extracting EV transaction data from MongoDB to S3 for automated business reporting.",
+    impact: "Parquet and date partitioning reduced Athena query costs by 95% and speed up daily refreshes by 30%. Idempotent pipeline design ensures zero duplicates on reruns.",
+    stack: ["Python", "PySpark", "AWS Glue", "S3", "Athena", "MongoDB", "Power BI"],
+  },
+  {
+    tag: "Machine Learning",
+    title: "Customer Retention & Churn Prediction",
+    desc: "A machine learning and analytics system designed to identify and segment at-risk EV charging users for proactive retention campaigns.",
+    impact: "Delivered a management Power BI dashboard and a care-team calling outcome console, recovering churned revenue at a fraction of new customer acquisition costs.",
+    stack: ["Python", "Scikit-Learn", "KMeans Clustering", "Feature Engineering", "Power BI", "MongoDB"],
+  },
+  {
+    tag: "Operations",
+    title: "Maintenance Tab & Outage Monitor",
+    desc: "A consolidated diagnostic dashboard and batch pipeline tracking real-time status and daily uptime/downtime of AC and DC EV chargers.",
+    impact: "Reduced charger operational downtime by approximately 20% by enabling support staff to diagnose and reset chargers or dispatch technicians instantly each morning.",
+    stack: ["Python", "MongoDB", "Data Pipelines", "Uptime Analytics"],
+  },
+  {
+    tag: "Generative AI",
+    title: "Client AI Agent (Natural Language Analytics)",
+    desc: "A conversational AI agent enabling EV charging station owners to query analytics (energy, health, churn) in natural language.",
+    impact: "Served 1,700+ daily active owners across 6,000+ stations with near-zero time-to-insight. Maintained prompt regression tests ensuring >95% accuracy prior to deployment.",
+    stack: ["Python", "LangChain", "OpenAI API", "PostgreSQL", "Redis", "LLM Tool Calling"],
+  },
+  {
+    tag: "AI Engineering",
+    title: "Customer Support AI Agent",
+    desc: "A support operator chatbot diagnosing and fixing EV charger issues without checking multiple dashboards.",
+    impact: "Reduced average support issue resolution time by approximately 50% while allowing new support staff to resolve complex charger faults independently.",
+    stack: ["Python", "FastAPI", "ChromaDB", "BM25", "RAG", "Server-Sent Events (SSE)", "LLM Reasoning"],
+  },
+  {
+    tag: "Machine Learning",
+    title: "Dynamic Tariff & ML Pricing System",
+    desc: "A machine learning pipeline forecasting network demand and automating surge pricing hourly for EV charging stations.",
+    impact: "Delivered a 10% average revenue uplift through demand-aware peak-hour load management and eliminated price volatility for low-usage chargers.",
+    stack: ["Python", "XGBoost", "Random Forest", "Facebook Prophet", "KMeans", "MongoDB"],
+  },
+  // Existing academic projects
   {
     tag: "M.Tech Dissertation",
     title: "SilentSpeak: Visual Speech Recognition",
