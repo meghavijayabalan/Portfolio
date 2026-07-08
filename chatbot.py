@@ -199,16 +199,39 @@ def generate_general_graph():
 ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
 
 TECH_DESCRIPTIONS = {
-    "machine learning": "Machine learning is the branch of artificial intelligence focused on building systems that learn from data, identify patterns, and make decisions with minimal human intervention.",
+    "machine learning": "Machine learning is a branch of artificial intelligence focused on building systems that learn from data, identify patterns, and make decisions with minimal human intervention. It encompasses supervised, unsupervised, and reinforcement learning paradigms.",
+    "Machine Learning": "Machine learning is a branch of artificial intelligence focused on building systems that learn from data, identify patterns, and make decisions with minimal human intervention. It encompasses supervised, unsupervised, and reinforcement learning paradigms.",
+    "deep learning": "Deep learning is a subset of machine learning that uses artificial neural networks with many layers to model high-level abstractions in data — such as recognizing speech, images, or text.",
+    "neural network": "A neural network is a computing system loosely modeled on the biological neural networks that make up the animal brain. It consists of layers of interconnected nodes that process information using connectionist approaches.",
+    "artificial intelligence": "Artificial Intelligence (AI) is the simulation of human intelligence processes by computer systems, including learning, reasoning, problem-solving, perception, and language understanding.",
+    "computer vision": "Computer Vision is a field of AI that trains computers to interpret and understand the visual world — detecting objects, recognizing faces, reading text from images, and processing video streams.",
+    "natural language processing": "Natural Language Processing (NLP) is a branch of AI dealing with the interaction between computers and humans through language — including tasks like text classification, translation, summarization, and entity recognition.",
+    "nlp": "NLP (Natural Language Processing) enables computers to understand, interpret, and generate human language — powering chatbots, translation engines, and text summarization systems.",
+    "data science": "Data science is an interdisciplinary field that uses scientific methods, processes, algorithms, and systems to extract knowledge and insights from structured and unstructured data.",
     "llms & ai systems": "Large Language Models (LLMs) and Agentic AI Systems utilize advanced generative AI models (like GPT-4 or Claude) designed to reason, plan, execute API tools, and handle complex conversational workflows.",
+    "LLMs & AI Systems": "Large Language Models (LLMs) and Agentic AI Systems utilize advanced generative AI models (like GPT-4 or Claude) designed to reason, plan, execute API tools, and handle complex conversational workflows.",
+    "llm": "A Large Language Model (LLM) is a deep learning model trained on massive text corpora that can generate, translate, summarize, and reason about text with human-like fluency.",
+    "llms": "Large Language Models (LLMs) are AI models trained on vast amounts of text data, capable of understanding and generating natural language for tasks like Q&A, code generation, and summarization.",
+    "generative ai": "Generative AI refers to AI systems that can generate new content — text, images, code, or audio — by learning patterns from training data. Examples include GPT-4, Claude, and Stable Diffusion.",
     "data engineering": "Data engineering is the practice of designing, building, and maintaining serverless data pipelines, data warehouses, and ETL (Extract, Transform, Load) systems to handle millions of transactions at scale.",
+    "Cloud & Data Engineering": "Cloud & Data Engineering involves architecting scalable, serverless data pipelines using AWS services like S3, Glue, and Athena alongside distributed processing engines like Apache Spark.",
     "mlops": "MLOps (Machine Learning Operations) applies DevOps principles to ML workflows, ensuring model reliability, regression testing, deployment health gates, rate limiting, and caching in production environments.",
+    "MLOps & DevOps": "MLOps & DevOps brings engineering discipline to machine learning — including containerization (Docker), CI/CD pipelines (GitHub Actions), regression testing, and production monitoring.",
     "langchain": "LangChain is a popular open-source orchestration framework designed to simplify the creation of applications using Large Language Models (LLMs).",
     "langgraph": "LangGraph is a library for building stateful, multi-actor agentic applications with LLMs, enabling complex cyclical flows, loops, and branching logic.",
     "rag": "RAG (Retrieval-Augmented Generation) is an architecture that optimizes LLM output by querying an external knowledge vector database (like ChromaDB) and cross-encoder reranking before generating a response.",
     "pyspark": "PySpark is the Python API for Apache Spark, a distributed general-purpose cluster-computing framework used for processing millions of rows of data concurrently in parallel pipelines.",
     "aws glue": "AWS Glue is a fully managed, serverless event-driven ETL service that prepares, transforms, and loads data from operational datastores (like MongoDB) to analytics data lakes (S3 Parquet).",
-    "xgboost": "XGBoost (Extreme Gradient Boosting) is an optimized, highly efficient, and flexible gradient boosting library widely used for tabular classification and regression forecasting."
+    "xgboost": "XGBoost (Extreme Gradient Boosting) is an optimized, highly efficient, and flexible gradient boosting library widely used for tabular classification and regression forecasting.",
+    "tensorflow": "TensorFlow is Google's open-source deep learning framework used for building and training neural networks, widely used for computer vision, NLP, and speech recognition tasks.",
+    "keras": "Keras is a high-level neural network API built on top of TensorFlow, making it easy to build, train, and evaluate deep learning models.",
+    "python": "Python is a high-level, interpreted programming language renowned for its readability and versatility, serving as the primary language for data science, machine learning, and AI development.",
+    "docker": "Docker is a platform for developing, shipping, and running applications in containers — ensuring consistent environments from development to production deployment.",
+    "redis": "Redis is an in-memory data structure store used as a database, cache, and message broker — critical for low-latency caching of LLM tool calls and session data.",
+    "sql": "SQL (Structured Query Language) is the standard language for relational database management, used to query, insert, update, and manage structured data.",
+    "postgresql": "PostgreSQL is a powerful, open-source object-relational database system known for its reliability, feature robustness, and performance for complex queries.",
+    "mongodb": "MongoDB is a document-oriented NoSQL database designed for high-volume data storage, commonly used for storing machine log events and real-time IoT data.",
+    "chromadb": "ChromaDB is an open-source embedding database used for storing and querying vector embeddings in RAG pipelines — enabling semantic search over large document corpora.",
 }
 
 def explain_skill_or_keyword(message: str) -> str:
@@ -217,15 +240,28 @@ def explain_skill_or_keyword(message: str) -> str:
     # Identify a tech or skill Megha has from SKILLS categories or other known technical terms
     all_techs = set()
     for cat, list_of_techs in profile_data.SKILLS.items():
+        # Include category names themselves (e.g. "Machine Learning", "LLMs & AI Systems")
+        all_techs.add(cat)
         for t in list_of_techs:
             all_techs.add(t)
             if "(" in t:
                 parts = t.split("(")
                 all_techs.add(parts[0].strip())
                 all_techs.add(parts[1].replace(")", "").strip())
-                
-    # Core tags to capture
-    all_techs.update(["pyspark", "aws glue", "athena", "s3", "xgboost", "prophet", "three.js", "webgl", "chromadb", "bm25", "redis", "langchain", "langgraph", "keras", "tensorflow", "opencv", "numpy", "pandas", "matplotlib", "seaborn", "mediapipe", "spark", "sql", "postgresql", "mongodb", "mysql", "docker", "git", "scikit-learn"])
+
+    # Broad aliases so users can ask in natural language
+    all_techs.update([
+        "machine learning", "deep learning", "neural network", "neural networks",
+        "artificial intelligence", "ai", "data science", "computer vision",
+        "natural language processing", "nlp", "large language model",
+        "pyspark", "aws glue", "athena", "s3", "xgboost", "prophet",
+        "three.js", "webgl", "chromadb", "bm25", "redis",
+        "langchain", "langgraph", "keras", "tensorflow", "opencv",
+        "numpy", "pandas", "matplotlib", "seaborn", "mediapipe",
+        "spark", "sql", "postgresql", "mongodb", "mysql",
+        "docker", "git", "scikit-learn", "rag", "mlops",
+        "data engineering", "llm", "llms", "generative ai",
+    ])
 
     matched_techs = []
     for tech in all_techs:
@@ -350,7 +386,9 @@ def get_chat_response(message: str) -> str:
                 f"![Profile Highlights]({url})\n\n"
                 "This summarizes her featured projects, academic projects, experience, research papers, and certifications."
             )
-    else:
+    # Always check if user is asking about a specific skill/tech — runs before bucket scoring
+    # to avoid false matches (e.g. "machine learning" hitting the certifications/learning bucket)
+    if not wants_graph:
         explanation = explain_skill_or_keyword(message)
         if explanation:
             return explanation
