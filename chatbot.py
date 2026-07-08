@@ -1,5 +1,15 @@
+import os
 import re
+import uuid
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Headless matplotlib backend for thread safety
+import matplotlib.pyplot as plt
 import profile_data
+
+# Ensure generated graphs directory exists
+GENERATED_DIR = os.path.join(os.path.dirname(__file__), "static", "images", "generated")
+os.makedirs(GENERATED_DIR, exist_ok=True)
 
 # Compile regular expressions once at module load
 BUCKET_PATTERNS = {
@@ -16,7 +26,150 @@ BUCKET_PATTERNS = {
     "achievements": re.compile(r"\b(achievements?|accomplishments?|success(es)?|awards?)\b", re.IGNORECASE),
     "publications": re.compile(r"\b(publications?|papers?|conferences?|creest)\b", re.IGNORECASE),
     "certifications": re.compile(r"\b(certifications?|certificates?|courses?|udemy|learning)\b", re.IGNORECASE),
+    "graph": re.compile(r"\b(graphs?|charts?|plots?|visualiz(e|ation)|draw|diagrams?)\b", re.IGNORECASE),
 }
+
+def generate_skills_graph():
+    filename = f"graph_skills_{uuid.uuid4().hex[:8]}.png"
+    filepath = os.path.join(GENERATED_DIR, filename)
+    
+    categories = ['LLMs & AI', 'Machine Learning', 'Data Eng', 'Languages', 'Databases', 'MLOps']
+    scores = [95, 90, 85, 80, 80, 75]
+    colors = ['#10b981', '#34d399', '#059669', '#6ee7b7', '#a7f3d0', '#047857']
+    
+    plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
+    ax = plt.axes()
+    ax.set_facecolor('#0d1117')
+    
+    bars = ax.barh(categories, scores, color=colors, height=0.6)
+    
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#30363d')
+    ax.spines['bottom'].set_color('#30363d')
+    ax.tick_params(colors='#8b949e', labelsize=9)
+    ax.xaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
+    ax.set_axisbelow(True)
+    
+    plt.title("Megha's Skill Proficiency (%)", fontsize=11, color='#ffffff', pad=12, weight='bold')
+    plt.xlim(0, 100)
+    
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 2, bar.get_y() + bar.get_height()/2, f'{int(width)}%', 
+                ha='left', va='center', color='#10b981', fontsize=8, weight='bold')
+                
+    plt.tight_layout()
+    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
+    plt.close()
+    return f"/static/images/generated/{filename}"
+
+def generate_projects_graph():
+    filename = f"graph_projects_{uuid.uuid4().hex[:8]}.png"
+    filepath = os.path.join(GENERATED_DIR, filename)
+    
+    categories = ['AI Eng', 'Machine Learning', 'Data Eng', 'Operations', 'Academic']
+    counts = [2, 3, 1, 1, 6]
+    colors = ['#10b981', '#34d399', '#6ee7b7', '#059669', '#3b82f6']
+    
+    plt.figure(figsize=(6, 3.5), facecolor='#0d1117')
+    ax = plt.axes()
+    ax.set_facecolor('#0d1117')
+    
+    bars = ax.bar(categories, counts, color=colors, width=0.5)
+    
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#30363d')
+    ax.spines['bottom'].set_color('#30363d')
+    ax.tick_params(colors='#8b949e', labelsize=9)
+    ax.yaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
+    ax.set_axisbelow(True)
+    
+    plt.title("Portfolio Projects by Category", fontsize=11, color='#ffffff', pad=12, weight='bold')
+    plt.yticks(range(0, 8, 2))
+    
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height + 0.1, f'{int(height)}', 
+                ha='center', va='bottom', color='#ffffff', fontsize=8, weight='bold')
+                
+    plt.tight_layout()
+    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
+    plt.close()
+    return f"/static/images/generated/{filename}"
+
+def generate_timeline_graph():
+    filename = f"graph_timeline_{uuid.uuid4().hex[:8]}.png"
+    filepath = os.path.join(GENERATED_DIR, filename)
+    
+    roles = ['RPA Data Analyst\nSoftware Incubator', 'Data Science Intern\nChargeMOD', 'Data Scientist\nChargeMOD']
+    durations = [24, 3, 16] # in months
+    colors = ['#3b82f6', '#6ee7b7', '#10b981']
+    
+    plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
+    ax = plt.axes()
+    ax.set_facecolor('#0d1117')
+    
+    y_pos = np.arange(len(roles))
+    bars = ax.barh(y_pos, durations, color=colors, height=0.5)
+    
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(roles, fontsize=8, color='#8b949e')
+    
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#30363d')
+    ax.spines['bottom'].set_color('#30363d')
+    ax.tick_params(colors='#8b949e', labelsize=9)
+    ax.xaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
+    ax.set_axisbelow(True)
+    
+    plt.title("Professional Experience Duration (Months)", fontsize=11, color='#ffffff', pad=12, weight='bold')
+    
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + 0.5, bar.get_y() + bar.get_height()/2, f'{int(width)}m', 
+                ha='left', va='center', color='#ffffff', fontsize=8, weight='bold')
+                
+    plt.tight_layout()
+    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
+    plt.close()
+    return f"/static/images/generated/{filename}"
+
+def generate_general_graph():
+    filename = f"graph_overview_{uuid.uuid4().hex[:8]}.png"
+    filepath = os.path.join(GENERATED_DIR, filename)
+    
+    metrics = ['Featured\nProjects', 'Academic\nProjects', 'Experience\n(Years)', 'Research\nPubs', 'Certifications']
+    values = [6, 6, 3.5, 1, 4]
+    colors = ['#10b981', '#34d399', '#6ee7b7', '#059669', '#3b82f6']
+    
+    plt.figure(figsize=(6.5, 3.5), facecolor='#0d1117')
+    ax = plt.axes()
+    ax.set_facecolor('#0d1117')
+    
+    bars = ax.bar(metrics, values, color=colors, width=0.45)
+    
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#30363d')
+    ax.spines['bottom'].set_color('#30363d')
+    ax.tick_params(colors='#8b949e', labelsize=8)
+    ax.yaxis.grid(True, linestyle='--', alpha=0.1, color='#ffffff')
+    ax.set_axisbelow(True)
+    
+    plt.title("Megha's Profile Highlights", fontsize=11, color='#ffffff', pad=12, weight='bold')
+    
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height + 0.1, f'{height}', 
+                ha='center', va='bottom', color='#ffffff', fontsize=8, weight='bold')
+                
+    plt.tight_layout()
+    plt.savefig(filepath, dpi=150, facecolor='#0d1117')
+    plt.close()
+    return f"/static/images/generated/{filename}"
 
 # Helper regex for additional on-topic checks
 ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
@@ -44,6 +197,44 @@ def get_chat_response(message: str) -> str:
             "I only talk about Megha Raj's work — experience, skills, projects, "
             "education or how to get in touch. Try asking me one of those!"
         )
+
+    # Check if a graph is requested
+    wants_graph = len(BUCKET_PATTERNS["graph"].findall(message_lc)) > 0
+    if wants_graph:
+        # Determine the topic of interest for the graph
+        has_skills = len(BUCKET_PATTERNS["skills"].findall(message_lc)) > 0
+        has_projects = len(BUCKET_PATTERNS["projects"].findall(message_lc)) > 0 or any(kw in message_lc for kw in ["tariff", "support", "analytics", "powerbi", "retention", "maintenance"])
+        has_experience = len(BUCKET_PATTERNS["experience"].findall(message_lc)) > 0 or any(kw in message_lc for kw in ["timeline", "history", "career"])
+        
+        if has_skills:
+            url = generate_skills_graph()
+            return (
+                "Here is a bar chart displaying Megha's core skill proficiencies:\n\n"
+                f"![Skills Graph]({url})\n\n"
+                "Her top strengths lie in LLM AI Systems, Machine Learning, and Data Engineering."
+            )
+        elif has_projects:
+            url = generate_projects_graph()
+            return (
+                "Here is a chart summarizing Megha's projects by category:\n\n"
+                f"![Projects Graph]({url})\n\n"
+                "Her portfolio features 6 production-grade projects at ChargeMOD (Data Engineering, Generative AI, Machine Learning, and Operations) and 6 academic projects."
+            )
+        elif has_experience:
+            url = generate_timeline_graph()
+            return (
+                "Here is a timeline graph displaying the duration of Megha's professional experience (in months):\n\n"
+                f"![Experience Timeline]({url})\n\n"
+                "She has accumulated over 3.5 years of industry experience across RPA, Data Analysis, and Data Science."
+            )
+        else:
+            # General highlight graph
+            url = generate_general_graph()
+            return (
+                "Here is a general highlight chart of Megha's professional portfolio:\n\n"
+                f"![Profile Highlights]({url})\n\n"
+                "This summarizes her featured projects, academic projects, experience, research papers, and certifications."
+            )
 
     # Single-pass scoring of all intents
     scores = {}

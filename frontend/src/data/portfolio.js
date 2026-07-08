@@ -77,6 +77,20 @@ export const publications = [
 
 export const projects = [
   {
+    tag: "AI Engineering",
+    title: "Customer Support AI Agent",
+    desc: "A support operator chatbot diagnosing and fixing EV charger issues without checking multiple dashboards.",
+    impact: "Reduced average support issue resolution time by approximately 50% while allowing new support staff to resolve complex charger faults independently.",
+    stack: ["Python", "FastAPI", "ChromaDB", "BM25", "RAG", "Server-Sent Events (SSE)", "LLM Reasoning"],
+  },
+  {
+    tag: "Machine Learning",
+    title: "Dynamic Tariff & ML Pricing System",
+    desc: "A machine learning pipeline forecasting network demand and automating surge pricing hourly for EV charging stations.",
+    impact: "Delivered a 10% average revenue uplift through demand-aware peak-hour load management and eliminated price volatility for low-usage chargers.",
+    stack: ["Python", "XGBoost", "Random Forest", "Facebook Prophet", "KMeans", "MongoDB"],
+  },
+  {
     tag: "Data Engineering",
     title: "Power BI Dashboard & ETL Pipeline",
     desc: "A nightly serverless data pipeline and dashboard extracting EV transaction data from MongoDB to S3 for automated business reporting.",
@@ -103,20 +117,6 @@ export const projects = [
     desc: "A conversational AI agent enabling EV charging station owners to query analytics (energy, health, churn) in natural language.",
     impact: "Served 1,700+ daily active owners across 6,000+ stations with near-zero time-to-insight. Maintained prompt regression tests ensuring >95% accuracy prior to deployment.",
     stack: ["Python", "LangChain", "OpenAI API", "PostgreSQL", "Redis", "LLM Tool Calling"],
-  },
-  {
-    tag: "AI Engineering",
-    title: "Customer Support AI Agent",
-    desc: "A support operator chatbot diagnosing and fixing EV charger issues without checking multiple dashboards.",
-    impact: "Reduced average support issue resolution time by approximately 50% while allowing new support staff to resolve complex charger faults independently.",
-    stack: ["Python", "FastAPI", "ChromaDB", "BM25", "RAG", "Server-Sent Events (SSE)", "LLM Reasoning"],
-  },
-  {
-    tag: "Machine Learning",
-    title: "Dynamic Tariff & ML Pricing System",
-    desc: "A machine learning pipeline forecasting network demand and automating surge pricing hourly for EV charging stations.",
-    impact: "Delivered a 10% average revenue uplift through demand-aware peak-hour load management and eliminated price volatility for low-usage chargers.",
-    stack: ["Python", "XGBoost", "Random Forest", "Facebook Prophet", "KMeans", "MongoDB"],
   },
   // Existing academic projects
   {

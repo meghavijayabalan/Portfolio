@@ -548,6 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     escaped = escaped.replace(/`(.*?)`/g, '<code>$1</code>');
+    escaped = escaped.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="chat-graph-img" style="max-width: 100%; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: block;">');
 
     const lines = escaped.split('\n');
     let inList = false;

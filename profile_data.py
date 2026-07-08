@@ -89,6 +89,36 @@ SKILLS = {
 
 PROJECTS = [
     {
+        "id": "support-ai-agent",
+        "title": "Customer Support AI Agent",
+        "category": "Production Project (ChargeMOD)",
+        "description": "A support operator chatbot diagnosing and fixing EV charger issues without checking multiple dashboards.",
+        "methodology": (
+            "Built as a modular monolith with a 3-step LLM reasoning pipeline (direct log-based diagnosis, "
+            "hybrid BM25 + ChromaDB RAG, and operator guided questioning). Features an anti-hallucination "
+            "validated ID cache and streams responses using Server-Sent Events (SSE)."
+        ),
+        "dataset": "Operator logs, transaction history, live status API responses, and vector database embeddings.",
+        "metrics": "Reduced average support issue resolution time by approximately 50% while allowing new support staff to resolve complex charger faults independently.",
+        "tech_stack": ["Python", "FastAPI", "ChromaDB", "BM25", "RAG", "Server-Sent Events (SSE)", "LLM Reasoning"],
+        "badge": "AI Engineering"
+    },
+    {
+        "id": "dynamic-tariff",
+        "title": "Dynamic Tariff & ML Pricing System",
+        "category": "Production Project (ChargeMOD)",
+        "description": "A machine learning pipeline forecasting network demand and automating surge pricing hourly for EV charging stations.",
+        "methodology": (
+            "Performs demand forecasting at two levels: network-wide forecasting (XGBoost, Random Forest, Facebook Prophet) "
+            "and per-charger activity forecasting (KMeans clustering, active classifier + active-hour log-space regressor). "
+            "Sigmoid mapping scales surge prices within +12% surcharge and -6% discount caps."
+        ),
+        "dataset": "7-day transaction history and 36-feature charger demand profiles from MongoDB.",
+        "metrics": "Delivered a 10% average revenue uplift through demand-aware peak-hour load management and eliminated price volatility for low-usage chargers.",
+        "tech_stack": ["Python", "XGBoost", "Random Forest", "Facebook Prophet", "KMeans", "MongoDB"],
+        "badge": "Machine Learning"
+    },
+    {
         "id": "chargemod-powerbi",
         "title": "Power BI Dashboard & ETL Pipeline",
         "category": "Production Project (ChargeMOD)",
@@ -146,36 +176,6 @@ PROJECTS = [
         "metrics": "Served 1,700+ daily active owners across 6,000+ stations with near-zero time-to-insight. Maintained prompt regression tests ensuring >95% accuracy prior to deployment.",
         "tech_stack": ["Python", "LangChain", "OpenAI API", "PostgreSQL", "Redis", "LLM Tool Calling"],
         "badge": "Generative AI"
-    },
-    {
-        "id": "support-ai-agent",
-        "title": "Customer Support AI Agent",
-        "category": "Production Project (ChargeMOD)",
-        "description": "A support operator chatbot diagnosing and fixing EV charger issues without checking multiple dashboards.",
-        "methodology": (
-            "Built as a modular monolith with a 3-step LLM reasoning pipeline (direct log-based diagnosis, "
-            "hybrid BM25 + ChromaDB RAG, and operator guided questioning). Features an anti-hallucination "
-            "validated ID cache and streams responses using Server-Sent Events (SSE)."
-        ),
-        "dataset": "Operator logs, transaction history, live status API responses, and vector database embeddings.",
-        "metrics": "Reduced average support issue resolution time by approximately 50% while allowing new support staff to resolve complex charger faults independently.",
-        "tech_stack": ["Python", "FastAPI", "ChromaDB", "BM25", "RAG", "Server-Sent Events (SSE)", "LLM Reasoning"],
-        "badge": "AI Engineering"
-    },
-    {
-        "id": "dynamic-tariff",
-        "title": "Dynamic Tariff & ML Pricing System",
-        "category": "Production Project (ChargeMOD)",
-        "description": "A machine learning pipeline forecasting network demand and automating surge pricing hourly for EV charging stations.",
-        "methodology": (
-            "Performs demand forecasting at two levels: network-wide forecasting (XGBoost, Random Forest, Facebook Prophet) "
-            "and per-charger activity forecasting (KMeans clustering, active classifier + active-hour log-space regressor). "
-            "Sigmoid mapping scales surge prices within +12% surcharge and -6% discount caps."
-        ),
-        "dataset": "7-day transaction history and 36-feature charger demand profiles from MongoDB.",
-        "metrics": "Delivered a 10% average revenue uplift through demand-aware peak-hour load management and eliminated price volatility for low-usage chargers.",
-        "tech_stack": ["Python", "XGBoost", "Random Forest", "Facebook Prophet", "KMeans", "MongoDB"],
-        "badge": "Machine Learning"
     },
     # Existing academic projects
     {

@@ -89,3 +89,6 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/
+
+# Generated Chatbot Graphs
+static/images/generated/
