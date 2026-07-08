@@ -30,8 +30,10 @@ import {
   Bot,
   FileText,
   Trophy,
+  MessageCircle,
 } from "lucide-react";
 import PortraitVortex from "@/components/PortraitVortex";
+import NeuralCanvas from "@/components/NeuralCanvas";
 import { useTheme } from "@/context/ThemeContext";
 import {
   experience,
@@ -246,6 +248,16 @@ const Hero = () => (
               <Mail size={16} />
             </a>
             <a
+              href="https://wa.me/917025654877?text=Hi%20Megha%2C%20I%20saw%20your%20portfolio"
+              target="_blank"
+              rel="noreferrer"
+              className="social-circle"
+              data-testid="social-whatsapp"
+              aria-label="WhatsApp"
+            >
+              <MessageCircle size={16} />
+            </a>
+            <a
               href="/cv.pdf"
               download
               className="social-circle"
@@ -262,7 +274,7 @@ const Hero = () => (
             <div className="portrait-halo" />
             <div className="portrait-frame">
               <div className="inner">
-                <img src="/images/profile.jpeg" alt="Megha Raj V S" />
+                <img src="/images/profile-nobg.png" alt="Megha Raj V S" />
               </div>
             </div>
             <PortraitVortex />
@@ -312,9 +324,11 @@ const Hero = () => (
 
 const About = () => {
   const tiltRef = useRef(null);
+  const sceneRef = useRef(null);
 
   const onMove = (e) => {
     const el = tiltRef.current;
+    const scene = sceneRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -322,11 +336,24 @@ const About = () => {
     const rotX = -y * 14;
     const rotY = x * 18;
     el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(20px)`;
+    // Parallax the floating orbs / badges the opposite way for depth
+    if (scene) {
+      const orbs = scene.querySelectorAll(".about-orb, .about-badge");
+      orbs.forEach((o, i) => {
+        const depth = 20 + (i % 4) * 10;
+        o.style.transform = `translate3d(${-x * depth}px, ${-y * depth}px, 0)`;
+      });
+    }
   };
   const onLeave = () => {
     if (tiltRef.current)
       tiltRef.current.style.transform =
         "rotateX(0deg) rotateY(0deg) translateZ(0)";
+    if (sceneRef.current) {
+      sceneRef.current
+        .querySelectorAll(".about-orb, .about-badge")
+        .forEach((o) => (o.style.transform = ""));
+    }
   };
 
   return (
@@ -335,14 +362,51 @@ const About = () => {
       <div className="container-x z-content grid md:grid-cols-2 gap-16 items-center">
         <div className="reveal about-3d">
           <div
-            ref={tiltRef}
-            className="tilt-target"
+            ref={sceneRef}
+            className="about-scene"
             onMouseMove={onMove}
             onMouseLeave={onLeave}
-            data-testid="about-3d-image"
           >
-            <img src="/images/about.jpg" alt="Megha Raj V S at work" />
-            <div className="tilt-shine" />
+            <div
+              ref={tiltRef}
+              className="tilt-target"
+              data-testid="about-3d-image"
+            >
+              <img src="/images/about.jpg" alt="Megha Raj V S at work" />
+              <div className="tilt-shine" />
+            </div>
+            <span className="about-orb o1" />
+            <span className="about-orb o2" />
+            <span className="about-orb o3" />
+            <span className="about-orb o4" />
+            <div className="about-badge b-top">
+              <span className="dot" />
+              <div>
+                <div
+                  className="font-mono text-[10px] uppercase tracking-widest"
+                  style={{ color: "var(--ink-soft)" }}
+                >
+                  Now
+                </div>
+                <div className="font-semibold text-sm">
+                  Shipping LLM agents
+                </div>
+              </div>
+            </div>
+            <div className="about-badge b-bot">
+              <BrainCircuit size={16} style={{ color: "var(--neuron-1)" }} />
+              <div>
+                <div
+                  className="font-mono text-[10px] uppercase tracking-widest"
+                  style={{ color: "var(--ink-soft)" }}
+                >
+                  Focus
+                </div>
+                <div className="font-semibold text-sm">
+                  Deep Learning · CV
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -351,27 +415,44 @@ const About = () => {
             <BrainCircuit size={12} /> About Me
           </span>
           <h2 className="section-title">
-            Bridging <em>Data</em> & Cognition
+            Where Data Meets <em>Intelligence.</em>
           </h2>
           <p
-            className="mt-6 text-base leading-relaxed"
+            className="mt-6 text-lg leading-relaxed font-medium"
+            style={{ color: "var(--ink)" }}
+          >
+            Every dataset tells a story. Every model should solve a real
+            problem.
+          </p>
+          <p
+            className="mt-5 text-base leading-relaxed"
             style={{ color: "var(--ink-muted)" }}
           >
-            I am a passionate Data Scientist and AI Engineer with a solid
-            grounding in Digital Image Computing. My expertise lies in designing
-            deep neural architectures and optimization frameworks — making deep
-            learning accessible, resource-efficient, and practical for
-            production deployment.
+            I specialize in building AI systems that move beyond experimentation
+            into real-world impact. My expertise combines data engineering,
+            machine learning, LLM applications, analytics, and computer vision
+            to develop solutions that are accurate, scalable, and practical.
           </p>
           <p
             className="mt-4 text-base leading-relaxed"
             style={{ color: "var(--ink-muted)" }}
           >
-            My career reflects a deliberate transition: from Automation (RPA) &
-            Data Analysis — building software robots and optimizing backend
-            workflows — into Deep Learning & Computer Vision, designing
-            spatiotemporal networks for visual speech recognition and advanced
-            mathematical imaging solutions.
+            From automating enterprise workflows to designing deep learning
+            architectures, my focus has always remained the same — building
+            technology that creates measurable value.
+          </p>
+          <p
+            className="mt-6 text-base leading-relaxed"
+            style={{ color: "var(--ink)", fontWeight: 500 }}
+          >
+            For me, AI isn&apos;t about replacing people.
+          </p>
+          <p
+            className="mt-1 text-base leading-relaxed"
+            style={{ color: "var(--neuron-1)", fontWeight: 500 }}
+          >
+            It&apos;s about empowering better decisions, faster innovation, and
+            meaningful outcomes.
           </p>
           <div className="flex flex-wrap gap-3 mt-8">
             <a href="#contact" className="btn-solid">
@@ -713,6 +794,12 @@ const Contact = () => {
                 href: "mailto:megha042023@gmail.com",
               },
               {
+                icon: <MessageCircle size={18} />,
+                lbl: "WhatsApp",
+                val: "Chat on WhatsApp",
+                href: "https://wa.me/917025654877?text=Hi%20Megha%2C%20I%20saw%20your%20portfolio%20and%20would%20love%20to%20connect.",
+              },
+              {
                 icon: <Phone size={18} />,
                 lbl: "Phone",
                 val: "+91 7025654877",
@@ -866,10 +953,25 @@ const Footer = () => (
   </footer>
 );
 
+const FloatingWhatsApp = () => (
+  <a
+    href="https://wa.me/917025654877?text=Hi%20Megha%2C%20I%20saw%20your%20portfolio%20and%20would%20love%20to%20connect."
+    target="_blank"
+    rel="noreferrer"
+    className="floating-wa"
+    data-testid="floating-whatsapp"
+    aria-label="Chat on WhatsApp"
+  >
+    <MessageCircle size={22} />
+    <span className="floating-wa-label">Message me</span>
+  </a>
+);
+
 const Portfolio = () => {
   useReveal();
   return (
     <div className="relative overflow-x-hidden">
+      <NeuralCanvas />
       <Nav />
       <main className="relative z-[1]">
         <Hero />
@@ -882,6 +984,7 @@ const Portfolio = () => {
         <Contact />
       </main>
       <Footer />
+      <FloatingWhatsApp />
     </div>
   );
 };

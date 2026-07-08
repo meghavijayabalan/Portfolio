@@ -40,7 +40,7 @@ const NeuralCanvas = () => {
             accent2: "rgba(34, 197, 94, 0.85)",
           };
 
-    const NODE_COUNT = Math.floor((width * height) / 18000);
+    const NODE_COUNT = Math.floor((width * height) / 30000);
     const nodes = Array.from({ length: NODE_COUNT }).map((_, i) => ({
       x: Math.random() * width,
       y: Math.random() * height,

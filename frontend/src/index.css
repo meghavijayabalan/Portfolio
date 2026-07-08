@@ -259,7 +259,101 @@ body {
     inset: 0;
     z-index: 0;
     pointer-events: none;
+    opacity: 0.55;
+}
+
+/* 3D about image with floating depth orbs */
+.about-scene {
+    position: relative;
+    perspective: 1400px;
+}
+.about-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--neuron-1), var(--neuron-3));
+    box-shadow: 0 0 40px var(--neuron-glow);
+    z-index: 4;
+    pointer-events: none;
+    animation: orb-drift 8s ease-in-out infinite;
+}
+.about-orb.o1 {
+    width: 42px;
+    height: 42px;
+    top: -18px;
+    left: -18px;
+    animation-delay: -0s;
+}
+.about-orb.o2 {
+    width: 24px;
+    height: 24px;
+    top: 22%;
+    right: -12px;
+    background: linear-gradient(135deg, var(--neuron-3), var(--neuron-2));
+    animation-delay: -2.5s;
+}
+.about-orb.o3 {
+    width: 54px;
+    height: 54px;
+    bottom: -22px;
+    right: -22px;
+    background: linear-gradient(135deg, var(--neuron-2), var(--neuron-1));
     opacity: 0.9;
+    animation-delay: -5s;
+}
+.about-orb.o4 {
+    width: 18px;
+    height: 18px;
+    top: 62%;
+    left: -10px;
+    animation-delay: -3.5s;
+}
+@keyframes orb-drift {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(10px, -14px) scale(1.15);
+    }
+}
+.about-badge {
+    position: absolute;
+    padding: 10px 14px;
+    background: var(--surface);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ink);
+    z-index: 5;
+    animation: orb-drift 7s ease-in-out infinite;
+}
+.about-badge.b-top {
+    top: -20px;
+    right: -20px;
+    animation-delay: -1s;
+}
+.about-badge.b-bot {
+    bottom: 8%;
+    left: -30px;
+    animation-delay: -4s;
+}
+.about-badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--neuron-1);
+    box-shadow: 0 0 8px var(--neuron-glow);
+    animation: pulse 1.6s ease-in-out infinite;
+}
+@media (max-width: 900px) {
+    .about-badge {
+        display: none;
+    }
 }
 
 /* Floating shapes */
@@ -332,7 +426,7 @@ body {
     z-index: 0;
 }
 
-/* Hero portrait — reference style: portrait fills right column with green swoosh trail behind */
+/* Hero portrait — background-removed PNG blends directly into page */
 .portrait-stage {
     position: relative;
     width: 100%;
@@ -350,47 +444,36 @@ body {
 }
 .portrait-frame .inner {
     position: absolute;
-    inset: 4%;
+    inset: 0;
     z-index: 2;
-    overflow: hidden;
-    border-radius: 50%;
-    /* Radial mask fades the photo edges into the page background */
-    -webkit-mask-image: radial-gradient(
-        ellipse 60% 65% at 50% 45%,
-        #000 62%,
-        rgba(0, 0, 0, 0.85) 74%,
-        rgba(0, 0, 0, 0.35) 88%,
-        transparent 100%
-    );
-    mask-image: radial-gradient(
-        ellipse 60% 65% at 50% 45%,
-        #000 62%,
-        rgba(0, 0, 0, 0.85) 74%,
-        rgba(0, 0, 0, 0.35) 88%,
-        transparent 100%
-    );
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 .portrait-frame .inner img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: bottom;
     display: block;
-    filter: contrast(1.06) saturate(1.05);
-    transform: scale(1.05);
+    filter: drop-shadow(0 40px 30px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 30px var(--neuron-glow));
+    transform: scale(1.02);
     transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .portrait-frame:hover .inner img {
-    transform: scale(1.1);
+    transform: scale(1.05) translateY(-4px);
 }
-/* Soft ambient halo — kept subtle */
+/* Soft ambient halo — kept subtle behind the subject */
 .portrait-halo {
     position: absolute;
-    inset: 4%;
+    inset: 12% 8% 8% 8%;
     border-radius: 50%;
     background: radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--neuron-1) 22%, transparent) 0%,
-        transparent 65%
+        ellipse 55% 60% at 50% 55%,
+        color-mix(in srgb, var(--neuron-1) 32%, transparent) 0%,
+        color-mix(in srgb, var(--neuron-1) 10%, transparent) 45%,
+        transparent 75%
     );
     filter: blur(28px);
     z-index: 0;
@@ -399,7 +482,7 @@ body {
 @keyframes halo-pulse {
     0%,
     100% {
-        opacity: 0.7;
+        opacity: 0.75;
     }
     50% {
         opacity: 1;
@@ -408,7 +491,7 @@ body {
 /* Vortex canvas layer for the green swoosh trail */
 .portrait-vortex {
     position: absolute;
-    z-index: 3;
+    z-index: 1; /* behind portrait so it swirls behind the subject */
     pointer-events: none;
 }
 
@@ -1168,7 +1251,66 @@ textarea:focus {
     }
 }
 
-/* Footer */
+/* Floating WhatsApp CTA */
+.floating-wa {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 14px 16px;
+    border-radius: 999px;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow:
+        0 12px 30px -8px rgba(37, 211, 102, 0.5),
+        0 0 0 6px rgba(37, 211, 102, 0.14);
+    transition:
+        transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 0.3s;
+    animation: wa-pulse 2.4s ease-in-out infinite;
+}
+.floating-wa:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow:
+        0 18px 40px -10px rgba(37, 211, 102, 0.65),
+        0 0 0 10px rgba(37, 211, 102, 0.2);
+}
+.floating-wa-label {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.floating-wa:hover .floating-wa-label {
+    max-width: 160px;
+}
+@keyframes wa-pulse {
+    0%,
+    100% {
+        box-shadow:
+            0 12px 30px -8px rgba(37, 211, 102, 0.5),
+            0 0 0 6px rgba(37, 211, 102, 0.14);
+    }
+    50% {
+        box-shadow:
+            0 12px 30px -8px rgba(37, 211, 102, 0.7),
+            0 0 0 12px rgba(37, 211, 102, 0.05);
+    }
+}
+@media (max-width: 640px) {
+    .floating-wa {
+        right: 16px;
+        bottom: 16px;
+        padding: 12px 16px;
+    }
+}
+
 .footer {
     padding: 60px 0 40px;
     border-top: 1px solid var(--border);
