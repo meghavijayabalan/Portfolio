@@ -1,0 +1,218 @@
+# Project Architecture: ChargeMOD Support AI Agent
+
+This document outlines the architecture, components, and data/control flows of the ChargeMOD Support AI Agent. The agent is built on top of Flask and leverages a multi-LLM orchestration pipeline to perform troubleshooting, charger diagnostics, action control (remote start/stop/booking), customer lookups, estimations, and RAG-based query resolution.
+
+---
+
+## 1. System Components Architecture
+
+The project is structured into distinct, modular layers. The client interacts with the Flask server, which in turn orchestrates database access, AI models, local fuzzy/geo-resolvers, and external backend APIs.
+
+```mermaid
+graph TB
+    subgraph ClientLayer ["Client Layer (Web UI)"]
+        ChatUI["Chat SPA (HTML/JS/CSS)<br/>chatbot.html / index.html"]
+        DashUI["Analytics Dashboard<br/>dashboard.html"]
+        AdminUI["Chat History & Bug Tracker<br/>chathistory.html / bugs.html"]
+    end
+
+    subgraph WebBackend ["Flask Application Backend (app.py)"]
+        Routes["HTTP Endpoints Handler<br/>/chat_stream, /action, /auth"]
+        AuthGuard["Auth & CSRF Guards<br/>auth_key.py / cm_token"]
+        Limiter["Rate Limiter<br/>Flask-Limiter"]
+        HistMgr["Chat History Manager<br/>ChatHistoryManager.py"]
+        Formatter["Response Formatter<br/>response_formatter.py"]
+    end
+
+    subgraph Orchestration ["Multi-LLM Agentic Orchestrator"]
+        Pipeline["3-LLM Call Pipeline<br/>app.py (ask_ai_web_stream)"]
+        EntityCache["Active Entity Cache<br/>(Anti-hallucination)"]
+        ParallelExec["Parallel Executor<br/>concurrency.py (run_parallel)"]
+    end
+
+    subgraph ToolsAndResolvers ["Agent Tools & Resolvers"]
+        Troubleshoot["troubleshoot tool"]
+        ChargerAction["charger_action tool"]
+        UserDetails["user_details tool"]
+        Estimations["estimations tool"]
+        FindNearby["find_nearby_chargers tool"]
+        PlaybookTool["search_playbook tool"]
+        
+        Resolver["Charger Resolver<br/>tools/charger_resolver.py"]
+        GeoResolver["Geo Location Resolver<br/>tools/geo_resolver.py"]
+    end
+
+    subgraph KnowledgeRetrieval ["Hybrid RAG Search Engine"]
+        ContextRet["RAG Router<br/>db/context_retrieval.py"]
+        BM25["BM25 Sparse Retrieval<br/>rank-bm25"]
+        Chroma["Chroma Vector DB<br/>Dense Semantic Retrieval"]
+        Reranker["Cross-Encoder Reranker<br/>ms-marco-MiniLM-L-6-v2"]
+    end
+
+    subgraph Datastores ["Storage & Databases"]
+        MongoDB[(MongoDB Database<br/>Sessions, History & Bugs)]
+        LocalFiles[(Local Pickles<br/>bm25_index.pkl / corpus.pkl)]
+    end
+
+    subgraph ExternalAPIs ["External Services & APIs"]
+        ChargeMOD_LS["ChargeMOD LS API<br/>(Location Service)"]
+        ChargeMOD_TTS["ChargeMOD TTS API<br/>(Transaction & Telemetry)"]
+        OpenAI_API["OpenAI API<br/>(GPT-4o-mini / GPT-5-nano)"]
+        Bedrock_API["AWS Bedrock API<br/>(Claude 3 Haiku)"]
+        GMap_API["Google Maps API<br/>(Geocoding)"]
+    end
+
+    %% Client and Server Communication
+    ChatUI <-->|HTTPS & SSE Stream| Routes
+    DashUI -->|HTTPS| Routes
+    AdminUI -->|HTTPS| Routes
+
+    %% Backend internal routing
+    Routes --> AuthGuard
+    Routes --> Limiter
+    Routes --> HistMgr
+    Routes --> Pipeline
+
+    %% Pipeline and Orchestration
+    Pipeline --> EntityCache
+    Pipeline --> ParallelExec
+    
+    %% Parallel Executor triggering tools
+    ParallelExec --> ToolsAndResolvers
+
+    %% Tools accessing external APIs or Resolvers
+    Troubleshoot --> ChargeMOD_TTS
+    Troubleshoot --> Resolver
+    ChargerAction --> ChargeMOD_TTS
+    ChargerAction --> ChargeMOD_LS
+    UserDetails --> ChargeMOD_TTS
+    FindNearby --> ChargeMOD_LS
+    FindNearby --> GeoResolver
+    
+    %% Resolvers using fuzzy logic & Google maps
+    Resolver -.->|Fuzzy Logic| RapidFuzz["RapidFuzz (local)"]
+    GeoResolver -.-> GMap_API
+
+    %% Hybrid RAG Search
+    PlaybookTool --> ContextRet
+    ContextRet --> BM25
+    ContextRet --> Chroma
+    ContextRet --> Reranker
+
+    %% Databases
+    HistMgr <--> MongoDB
+    BM25 <--> LocalFiles
+    Chroma <--> Datastores
+    EntityCache <--> MongoDB
+
+    %% LLM APIs
+    Pipeline <--> OpenAI_API
+    Pipeline <--> Bedrock_API
+
+    style ClientLayer fill:#e8f4fd,stroke:#1d4ed8,stroke-width:2px
+    style WebBackend fill:#f0fdf4,stroke:#15803d,stroke-width:2px
+    style Orchestration fill:#fdf2f8,stroke:#be185d,stroke-width:2px
+    style ToolsAndResolvers fill:#fffbeb,stroke:#b45309,stroke-width:2px
+    style KnowledgeRetrieval fill:#faf5ff,stroke:#6b21a8,stroke-width:2px
+    style Datastores fill:#f3f4f6,stroke:#374151,stroke-width:2px
+    style ExternalAPIs fill:#f0fdfa,stroke:#0f766e,stroke-width:2px
+```
+
+---
+
+## 2. The 3-LLM Execution Pipeline Flow
+
+The core workflow of the support agent processes operator inputs using a three-phase sequential LLM setup designed to guarantee action safety, direct context-based reasoning, and RAG fallback.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Operator as Operator (UI Client)
+    participant Flask as Flask Backend (app.py)
+    participant SessionDB as Session Store (MongoDB)
+    participant LLM1 as Call 1: Router LLM
+    participant Tools as Parallel Tools Executor
+    participant LLM2 as Call 2: Reasoner LLM (Path A/B/C)
+    participant RAG as Hybrid RAG (Chroma + BM25)
+    participant LLM3 as Call 3: Response LLM
+    participant Formatter as Response Formatter (UI Elements)
+
+    Operator->>Flask: POST /chat_stream (user query, session_id)
+    Flask->>SessionDB: Retrieve chat history & active entities (charger, phone, etc.)
+    SessionDB-->>Flask: History, cached entities
+    Flask->>LLM1: System Prompt + Injected Entities + Query (openai/bedrock)
+    LLM1-->>Flask: Tool Calls (e.g. troubleshoot, charger_action)
+    
+    rect rgb(240, 248, 255)
+        note over Flask, Tools: Concurrency Worker Thread (Heartbeat to UI)
+        Flask->>Tools: Execute identified tools concurrently via run_parallel()
+        Tools->>Tools: Resolve inputs via charger/location resolvers (Fuzzy/Geo)
+        Tools->>Tools: Call external ChargeMOD APIs (LS, TTS)
+        Tools-->>Flask: Tool results (Logs, charger specs, customer profile)
+    end
+    
+    Flask->>SessionDB: Extract & persist new entities (charger ID, verified phone)
+    
+    alt If troubleshoot tool successfully fetches diagnostics
+        Flask->>LLM2: System Prompt + troubleshoot raw data + user query (GPT-4o-mini)
+        LLM2-->>Flask: JSON Decision (Path A, B, or C)
+        
+        alt Path A: Direct Answer
+            note over Flask: Logs directly explain fault (no RAG needed)
+        else Path B: Playbook RAG
+            Flask->>RAG: search_playbook(symptom, charger_type, vehicle)
+            RAG->>RAG: BM25 Sparse Search + ChromaDB Dense Search
+            RAG->>RAG: Cross-Encoder Reranker
+            RAG-->>Flask: Top matching SOP manuals / troubleshooting steps
+        else Path C: Clarify / Ask Customer
+            note over Flask: Ambiguous logs -> build multi-choice clarifying questions
+        end
+    end
+
+    Flask->>LLM3: Final response prompt + Injected rules (AC/DC specific) + RAG/Path Context + Tool Results
+    LLM3-->>Flask: Stream final text answer (SSE)
+    
+    Flask->>Formatter: Build tables, action buttons (OTP, start/stop), suggestion chips, CSV downloads
+    Flask-->>Operator: Emit final structured JSON via SSE
+    Flask->>SessionDB: Append chat history (assistant turn, tokens, pipeline logs)
+```
+
+---
+
+## 3. Code Layer Mapping
+
+Below is the mapping of modules and files in this repository responsible for each architectural component:
+
+### 3.1 Web & Control Layer
+- **[app.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/app.py)**: The main entry point. Initializes Flask, controls the 3-LLM pipeline flow (`ask_ai_web_stream`), acts as the SSE channel generator, and handles the administration, history lookup, dashboard, and authentication endpoints.
+- **[auth_key.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/auth_key.py)**: Decodes and verifies ChargeMOD JWT cookies, returning the user authentication token and details.
+- **[concurrency.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/concurrency.py)**: Uses Python's `ThreadPoolExecutor` to run API calls and tool processes concurrently inside `run_parallel`, reducing overall request latency.
+- **[response_formatter.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/response_formatter.py)**: Translates the LLM-generated text block into structured JSON payload formats. Detects table formats, extracts CSV targets, and yields suggestions, buttons, and visual components.
+
+### 3.2 AI Tool Implementations
+- **[tools/schemas.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/schemas.py)**: Declares the JSON schemas for the agent tools (`troubleshoot`, `user_details`, `charger_action`, `estimations`, `search_playbook`, `find_nearby_chargers`) in both OpenAI and Bedrock formats.
+- **[tools/troubleshoot.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/troubleshoot.py)**: Charger diagnostics tool. Queries raw logs, last transactions, active charging states, status history, and vendor error details.
+- **[tools/charger_action.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/charger_action.py)**: Action state machine wrapper. Conducts reservations, starts remote sessions (gated by OTP/mobile verification and wallet checks), and ends active sessions.
+- **[tools/user_details.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/user_details.py)**: Retrieves user profiles, wallet transactions, payment history, registration info, and EV specifications.
+- **[tools/estimations.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/estimations.py)**: Implements mathematical functions to calculate time-to-target SOC, cost, range gains, and payment/wallet sufficiency.
+- **[tools/search_playbook.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/search_playbook.py)**: Calls the RAG search pipeline or forms Path C questionnaire structures.
+- **[tools/charger_resolver.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/charger_resolver.py)** & **[tools/geo_resolver.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/tools/geo_resolver.py)**: Resolvers using exact matching, rapidfuzz-based substring matching, and Google Maps API coordinates to resolve user queries into canonical Charger IDs.
+
+### 3.3 Databases & Search
+- **[ChatHistory/ChatHistoryManager.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/ChatHistory/ChatHistoryManager.py)**: Standard MongoDB query runner that stores conversation logs, active entity caches (charger ID, user email, phone), token counts, and operator feedback.
+- **[db/context_retrieval.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/db/context_retrieval.py)**: Performs hybrid search. Merges results from `rank-bm25` (using pickled index `bm25_index.pkl`) and `langchain_chroma` semantic dense search, then ranks results using `sentence-transformers` Cross-Encoder model.
+
+### 3.4 Integration & External API Layer
+- **[api/http_client.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/api/http_client.py)**: Managed request session pooling with automatic timeouts, backoffs, and retries.
+- **[api/chargepoints.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/api/chargepoints.py)**, **[api/customer_data.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/api/customer_data.py)**, **[api/RemoteStart.py](file:///c:/Users/admin/Desktop/New%20CSA/customersupport_AIagent/api/RemoteStart.py)**, etc.: Formulate payload templates, submit HTTP POST/GET requests to ChargeMOD's backend endpoints, and handle response parsing.
+
+---
+
+## 4. Key Architectural Patterns
+
+- **Anti-Hallucination Entity Cache**: Gated on tool success, confirmed entities (e.g. `charger_id`, `verified_phone`) are persisted on the MongoDB session. Before Call 1 and Call 3, the cache injects these as context blocks. This forces the LLM to target existing IDs and stops them from inventing new identifiers.
+- **The Path A/B/C Framework**: Prevents direct RAG lookup.
+  - **Path A**: When live diagnostic logs are sufficient (e.g. connector unplugged), explain immediately.
+  - **Path B**: Run search playbook hybrid search to retrieve SOP instructions for identified faults (e.g. hardware faults).
+  - **Path C**: When symptoms are vague, prompt the user with interactive, deterministic clarification questions, using session state memory to avoid loops.
+- **Heartbeat-Backed Streaming Thread**: Slow third-party APIs can trigger connection dropouts. To resolve this, `app.py` runs the tools execution block in a daemon thread. This allows the main request thread to yield SSE heartbeats (`Still working...`) back to the client browser, maintaining connection stability.

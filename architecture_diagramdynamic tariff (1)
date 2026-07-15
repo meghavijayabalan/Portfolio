@@ -1,0 +1,206 @@
+# Dynamic Tariff Project Architecture
+
+This document provides a comprehensive technical overview and visual architecture diagram of the **Dynamic Tariff** backend pricing system. The system computes hourly, next-day tariff adjustments (surges and rebates) per charger to flatten peak demand while enforcing safety and compliance constraints.
+
+---
+
+## 1. High-Level Architecture Overview
+
+The system is built as a scheduled batch pipeline that operates in three distinct phases: **Data Ingestion**, **Multi-Level Forecasting (Network & Charger)**, and **Pricing & API Publishing**.
+
+```mermaid
+flowchart TB
+    subgraph Data Layer [1. Data Layer & Integrations]
+        MongoDB[(MongoDB Console)]
+        pwr[(pwrtransactions)] --> MongoDB
+        cp[(chargepoints)] --> MongoDB
+        loc[(locations)] --> MongoDB
+    end
+
+    subgraph Forecast Layer [2. Forecasting Pipelines]
+        direction TB
+        subgraph Network Demand [Network Demand Forecasting]
+            ND_Data[7-Day Actuals Aggregator]
+            ND_Model[Winning Model Selector<br/>XGBoost / RF / Prophet]
+            ND_Forecast[Hourly Network Load Predictor]
+            ND_Score[Network Score Normalizer]
+            ND_Data --> ND_Model --> ND_Forecast --> ND_Score
+        end
+        
+        subgraph Charger Demand [Charger Demand Forecasting]
+            C_Split[Hourly Actuals Splitter]
+            C_Clust[KMeans Charger Clustering]
+            C_Feat[Lag & Calendar Feature Eng]
+            C_Model[Two-Stage Model<br/>P active * conditional energy]
+            C_Score[Charger Score Normalizer]
+            C_Split --> C_Clust --> C_Feat --> C_Model --> C_Score
+        end
+    end
+
+    subgraph Pricing Layer [3. Main Orchestration & Pricing]
+        direction TB
+        Main[main.py Orchestrator]
+        Filter[Alpha Location Filter]
+        Weight[Composite Score Calc]
+        Policy[Policy Params Loader]
+        Surge[Asymmetric Sigmoid Mapper]
+        Negs[Min Negatives Constraint Enforcer]
+        
+        Main --> Filter
+        Filter --> Weight
+        Weight --> Policy
+        Policy --> Surge
+        Surge --> Negs
+    end
+
+    subgraph Delivery Layer [4. Payload Delivery]
+        Json[tariff_output.json]
+        API[Core API POST /tariff]
+        Backend[(Tariff Store)]
+    end
+
+    %% Data Flow
+    MongoDB --> ND_Data
+    MongoDB --> C_Split
+    MongoDB --> Filter
+    ND_Score --> Weight
+    C_Score --> Weight
+    Negs --> Json
+    Json --> API
+    API --> Backend
+
+    %% Color Coding
+    style Data Layer fill:#f5f5f7,stroke:#c8c8cd
+    style Network Demand fill:#e1f5ff,stroke:#85c2ff
+    style Charger Demand fill:#fff4e1,stroke:#ffd085
+    style Pricing Layer fill:#ffe1f5,stroke:#ff85c2
+    style Delivery Layer fill:#e1ffe1,stroke:#85ff85
+```
+
+---
+
+## 2. Component Directory Structure
+
+The codebase is organized modularly, with directories separating forecasting concerns (network-level vs. charger-level), scheduling scripts, configurations, and monthly regression audits.
+
+```
+Dynamic-Tariff/
+├── Main/                           # Main Orchestrator & Scoring
+│   ├── main.py                     # Entry point for next-day pricing run
+│   ├── Output/                     # Local outputs
+│   │   └── tariff_output.json      # Generated target API payloads
+│   └── requirements.txt            # Operational python dependencies
+├── Charger_Demand/                 # Charger Demand Module (AC & DC)
+│   ├── AC/                         # AC forecasting models and preprocess
+│   ├── DC/                         # DC forecasting models and preprocess
+│   ├── concat_next_day_predictions.py
+│   ├── Run_All_NextDay.py          # Trigger script for charger forecasts
+│   └── time_series_cv.py           # Cross-validation helper
+├── Network_Demand/                 # System Network Demand Module
+│   ├── Data/                       # MongoDB actuals pipeline
+│   ├── Forecasting/                # Model inference scripts
+│   ├── Graph/                      # Data plotting helpers
+│   ├── ND_Main/                    # Sub-pipeline orchestrator
+│   └── Training/                   # XGBoost, RF, Prophet training
+├── Surge_monthly/                  # Monthly historical evaluation pipeline
+└── policy_params.json              # Global pricing rules & boundary constants
+```
+
+---
+
+## 3. Data Processing and Pipelines Detailed Flow
+
+### Phase A: Network Demand Pipeline
+Calculates global grid-level consumption patterns.
+1. **Aggregator (`7Day_Data.py`)**: Fetches transaction records from MongoDB and calculates the hourly aggregate consumption window.
+2. **Model Champion Selection (`main.py` / `best_model.json`)**: Reads evaluation logs to load the best-performing model (XGBoost, RandomForest, or Prophet) depending on the latest training session RMSE.
+3. **Forecasting**: Predicts global system usage for the next day and normalizes hourly loads to an `hour_score` (between `0` and `1`).
+
+### Phase B: Charger Demand Pipeline (AC & DC Segmented)
+Calculates granular demand forecasts for individual chargepoints.
+1. **Hour Splitting (`hourly_split.py`)**: Splits multi-hour sessions into precise hourly transactional loads.
+2. **Behavioral Clustering (`clustering.py`)**: Groups chargers into patterns using K-Means to support profile imputation.
+3. **Feature Engineering (`feature_engineering.py`)**: Computes deterministic lags, rolling statistics, and calendar attributes (e.g. holidays, weekends).
+4. **Two-Stage ML Predictor**:
+   - **Stage 1 (Classifier)**: RandomForest/XGBoost determines the activity probability: $P(\text{active})$.
+   - **Stage 2 (Regressor)**: Predicts energy demand in log-space ($log1p$ kWh) conditional on the charger being active.
+   - **Final Prediction**: $P(\text{active}) \times expm1(\text{Stage 2 Output})$
+5. **Dynamic Scoring (`Predict_Next_Day.py`)**: Scales predicted values to an `hour_score` in a $[0, 1]$ range relative to a rolling window (current forecast + past 7 days of actuals).
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cron as Scheduler
+    participant Main as Main Orchestrator (main.py)
+    participant ND as Network Demand Pipeline
+    participant CD as Charger Demand Pipeline
+    participant DB as MongoDB Instance
+    participant API as Core Backend API
+
+    Cron ->> Main: Execute Pipeline
+    Main ->> ND: Run ND_Main/main.py
+    ND ->> DB: Fetch past 7 days aggregate transactions
+    DB -->> ND: Transaction data
+    ND ->> ND: Predict hourly network load
+    ND -->> Main: Save XGB_future_predictions.csv (network_demand score)
+
+    Main ->> CD: Run Run_All_NextDay.py (AC & DC)
+    CD ->> DB: Fetch charger-level transaction actuals
+    DB -->> CD: Charger data
+    CD ->> CD: Run K-Means Clustering + two-stage inference
+    CD -->> Main: Save all_next_day_predictions.csv (charger_demand score)
+
+    Main ->> DB: Fetch Alpha-Guaranteed Location/ChargePoint mapping
+    DB -->> Main: Charger ID list
+    Main ->> Main: Merge scores, compute composite score (Weights: Charger, Network, Power, Holiday)
+    Main ->> Main: Load policy_params.json
+    Main ->> Main: Apply Asymmetric Sigmoid Surge & Min-Discounts Constraints
+    Main ->> Main: Format JSON Payload (organizationId, hourlyBreakdownSurges)
+    Main ->> API: POST /tariff (per active charger payload)
+    API -->> Main: 200 OK / Response confirmation
+```
+
+---
+
+## 4. Scoring, Pricing, & Safety Guardrails
+
+### 4.1 Composite Pricing Score Calculation
+The final surge decision index combines multiple normalized features:
+
+$$\text{Composite Score} = (W_C \cdot S_{charger}) + (W_N \cdot S_{network}) + (W_P \cdot S_{power}) + (W_H \cdot S_{holiday})$$
+
+Where:
+* $W_C = 0.50$ (Charger Demand Weight)
+* $W_N = 0.50$ (Network Demand Weight)
+* $W_P = 0.10$ (Normalized Max Output Power Weight)
+* $W_H = 0.10$ (Holiday Flag Weight)
+* The final sum is clipped to the $[0, 1]$ range.
+
+### 4.2 Asymmetric Sigmoid Mapping
+Rather than a direct linear mapping, scores are parsed relative to a dynamic neutral midpoint via a vectorized sigmoid:
+
+$$\text{Neutral Midpoint} = \text{Quantile}(S_{\text{scores}}, \text{neutral\_q}) + \text{neutral\_shift}$$
+
+Using the neutral midpoint, an asymmetric mapping applies independent caps for positive surge and negative rebate events:
+
+```
+                  Surge Output (%)
+                        ^
+                        |       /+12% (surge_cap_pos)
+                        |      /
+                        |     /
+                        |    /
+------------------------+-------------------> Composite Score
+            -6% (cap)  / |
+                      /  |
+                     /   |
+                    /    |
+                   v     |
+```
+
+### 4.3 Governance Constraints
+To protect customer trust and ensure price variance:
+* **Positive Cap**: Maximum surge is capped at **+12%**.
+* **Negative Rebate Cap**: Minimum price discount is capped at **-6%**.
+* **Minimum Daily Discount Events**: The pipeline guarantees at least **3 negative hours per day** for every charger by identifying the lowest-score hours and forcing a discount (minimum $-2\%$).
+* **Alpha-Guaranteed Filter**: Calculations are restricted strictly to locations where the flag `isAlphaGuaranteed` is set to `True` in MongoDB.

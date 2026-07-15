@@ -1,0 +1,182 @@
+# Chargemod Client AI Agent: Architectural Blueprint
+
+This document provides a comprehensive overview of the architecture of the **Chargemod Client AI Agent**. It details the request-response lifecycles, data sync pipelines, diagnostic subsystems, and RBAC authorization boundaries that power the conversational analytics and support platform.
+
+---
+
+## 1. System Request-Response Lifecycle
+The diagram below shows how a natural language request from the user is routed, authenticated, parsed, validated, scoped via location-based RBAC, executed by a domain tool, and finally formatted into a rich visualization or textual response.
+
+```mermaid
+flowchart TD
+    %% Styling
+    classDef client fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef app fill:#ede7f6,stroke:#4a148c,stroke-width:2px;
+    classDef logic fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
+    classDef data fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    
+    %% Nodes
+    U[User / Chat UI]:::client
+    CR[Chat Router <br/><i>app/routers/chat.py</i>]:::app
+    AM[Auth Middleware <br/><i>app/middleware/auth.py</i>]:::app
+    AG[Agent Orchestrator <br/><i>app/agent/agent.py</i>]:::logic
+    PB[Prompt Builder <br/><i>app/agent/prompt_builder.py</i>]:::logic
+    LLM[LLM Engine <br/><i>Gemini / OpenAI API</i>]:::logic
+    VAL[Argument Validator <br/><i>Pydantic schemas</i>]:::logic
+    EX[Tool Registry & Executors <br/><i>app/tools/*</i>]:::logic
+    RBAC[RBAC Scoper <br/><i>apply_location_scope</i>]:::app
+    DB[(PostgreSQL Database)]:::data
+    API[External Service APIs <br/><i>Logs, Chargepoint Status</i>]:::data
+    COMP[Response Composer <br/><i>response_composer.py</i>]:::logic
+
+    %% Edits / Connections
+    U -->|POST /api/chat| CR
+    CR -->|Verify Cookie Token| AM
+    AM -->|Session Context| AG
+    AG -->|Assemble Prompt & Tools| PB
+    PB -->|System + User + Few-shot| LLM
+    LLM -->|Text or JSON Tool Call| DEC{Intent Type?}
+    
+    DEC -->|Direct Text / Guardrail| COMP
+    DEC -->|Tool Request| VAL
+    
+    VAL -->|Valid Arguments| EX
+    EX -->|Location Verification| RBAC
+    RBAC -->|Enforce Location Filters| DB
+    RBAC -->|Remote Start/Stop/Logs| API
+    
+    DB -->|Raw Records| EX
+    API -->|API Response| EX
+    EX -->|Structured Output| COMP
+    COMP -->|Text Summary + Charts/JSON| U
+```
+
+---
+
+## 2. Ingestion & Scheduled Sync Pipelines (MongoDB → PostgreSQL)
+The analytics tools query pre-aggregated, indexed PostgreSQL tables to ensure sub-second response times. Scheduled jobs (handled by `APScheduler` and protected by file-locking concurrency guards) pull and sync live data from the operational MongoDB databases into PostgreSQL.
+
+```mermaid
+flowchart TD
+    %% Styling
+    classDef mongo fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef jobs fill:#eceff1,stroke:#37474f,stroke-width:2px;
+    classDef pg fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+    classDef cache fill:#fffde7,stroke:#fbc02d,stroke-width:2px;
+
+    %% Source Mongo
+    subgraph Mongo [MongoDB Source DB]
+        CP[(chargepoints)]:::mongo
+        LOC[(locations)]:::mongo
+        EVS[(evses)]:::mongo
+        CUST[(customers)]:::mongo
+        ORG[(organisations)]:::mongo
+    end
+
+    %% Sync Jobs
+    subgraph Scheduler [APScheduler Sync Jobs]
+        ACDC[maintenance_job_acdc<br/>Detect Uptime/Outages]:::jobs
+        DAG[maintenanceDailyAgg<br/>Daily aggregates]:::jobs
+        HAG[maintenanceHourlyAgg<br/>Hourly state logs]:::jobs
+        ETL[transaction ETL<br/>Daily sessions sync]:::jobs
+        EN[hourly_monthly_energy<br/>Compile Energy/Solar Splits]:::jobs
+        CHG[charger_db_sync<br/>Cache Builder]:::jobs
+    end
+
+    %% PostgreSQL Tables
+    subgraph Postgres [PostgreSQL Target Tables]
+        TLIVE[(maintenance_live)]:::pg
+        THIST[(maintenance_history)]:::pg
+        TDAG[(maintenance_daily_agg)]:::pg
+        THAG[(maintenance_hourly_agg)]:::pg
+        TTX[(transactions)]:::pg
+        TEH[(ev_hourly_metrics)]:::pg
+        TEM[(ev_monthly_metrics)]:::pg
+    end
+
+    %% Cache
+    CACHE[all_chargers_db.json]:::cache
+
+    %% Pipelines
+    CP --> ACDC
+    EVS --> ACDC
+    ACDC --> TLIVE
+    ACDC --> THIST
+    
+    TLIVE --> DAG --> TDAG
+    THIST --> DAG
+    TLIVE --> HAG --> THAG
+    
+    CP --> ETL --> TTX
+    CP --> EN --> TEH
+    EN --> TEM
+    
+    CP --> CHG --> CACHE
+    LOC --> CHG
+```
+
+---
+
+## 3. Charger Diagnostics & Troubleshooting Engine
+For customer support queries (diagnostics, live session issues), the troubleshooting flow queries logs across multiple tiers, determines the failure scenario, and interacts with real chargers via MQTT/OCPP.
+
+```mermaid
+flowchart TD
+    %% Styling
+    classDef tool fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
+    classDef api fill:#e0f2f1,stroke:#004d40,stroke-width:2px;
+    classDef resolver fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+
+    %% Diagnostic & Support Nodes
+    T[Troubleshoot Request]:::tool
+    CR[charger_resolver.py]:::resolver
+    PFetch{Parallel API Fetch}:::api
+    LogTiers[Tiered Log Extractor<br/>Tier 1 -> Tier 2 -> Tier 3]:::api
+    ErrLookup[Error Lookup Engine<br/>Vendor-specific filters]:::tool
+    Scenario[Scenario Classifier<br/>e.g. Stuck Prep, Offline, Faulted]:::tool
+    Action[Charger Action Executor<br/>Remote Start/Stop/Book]:::tool
+
+    %% Flow
+    T -->|Identifier| CR
+    CR -->|Fuzzy / Substring Match| CR
+    CR -->|1. Exact ID Found| PFetch
+    CR -->|2. Need Selection| AskUser[Prompt User Selection]
+    CR -->|3. Near Location| GeoSearch[Geo-Locate Chargers]
+
+    PFetch --> LogTiers
+    PFetch --> GetVehicle[Fetch Customer Vehicle specs]
+    PFetch --> GetTx[Fetch Last Transaction Details]
+
+    LogTiers --> Scenario
+    ErrLookup --> Scenario
+    Scenario -->|Diagnostic Report| TSReport[Return Diagnostic Report]
+    
+    TSReport -->|Action Triggered| Action
+    Action -->|Require Confirmation| ConfirmGate{User Confirmed?}
+    ConfirmGate -->|Yes| WalletCheck{Wallet Balance > 0?}
+    WalletCheck -->|Yes| OTPGate{Verify OTP if required}
+    OTPGate -->|Verified| RemoteAPI[Issue Remote Command]
+```
+
+---
+
+## 4. RBAC & Security Access Scoping
+Security is strictly applied. All database queries must be scoped to the user's explicit list of authorized locations. If not resolved, a deny-all response ensures no accidental data exposure.
+
+```mermaid
+flowchart TD
+    %% Styling
+    classDef security fill:#ffebee,stroke:#c62828,stroke-width:2px;
+    classDef database fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+
+    User[Authenticated User Session]:::security
+    Auth[Load allowedLocations from user profile]:::security
+    Check{allowedLocations Empty?}:::security
+    
+    Check -->|Yes| Deny[Deny-All: Empty Result Set]:::security
+    Check -->|No| BuildQuery[Inject location_id filter into query]:::security
+    
+    BuildQuery -->|WHERE location_id IN ...| RunQuery[Execute SQL Database Query]:::database
+    RunQuery --> FilterPII[Strip Customer PII: Emails, Phone numbers]:::security
+    FilterPII --> ReturnData[Send Secure Response]:::security
+```
