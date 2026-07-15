@@ -125,10 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================
-  // 5. Project Card Collapsible Details & Architecture Toggle
+  // 5. Project Card Collapsible Details Toggle
   // ==========================================
   const toggleDetailsButtons = document.querySelectorAll('.btn-toggle-details');
-  const viewArchitectureButtons = document.querySelectorAll('.btn-view-architecture');
 
   toggleDetailsButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -137,69 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const isOpening = !card.classList.contains('details-open');
       
-      // Close other open project details or architectures
-      document.querySelectorAll('.project-card').forEach(otherCard => {
-        if (otherCard !== card) {
-          otherCard.classList.remove('details-open');
-          otherCard.classList.remove('arch-open');
-          const otherArch = otherCard.querySelector('.project-card__architecture');
-          if (otherArch) otherArch.style.maxHeight = '0px';
-          const otherDetailsBtn = otherCard.querySelector('.btn-toggle-details span');
-          if (otherDetailsBtn) otherDetailsBtn.textContent = 'View Technical Details';
+      // Close other open project cards
+      document.querySelectorAll('.project-card.details-open').forEach(openCard => {
+        if (openCard !== card) {
+          openCard.classList.remove('details-open');
         }
       });
-
-      // Close architecture drawer on this card if opening details
-      if (isOpening) {
-        card.classList.remove('arch-open');
-        const arch = card.querySelector('.project-card__architecture');
-        if (arch) arch.style.maxHeight = '0px';
-      }
 
       card.classList.toggle('details-open');
 
       const textSpan = btn.querySelector('span');
       if (textSpan) {
         textSpan.textContent = isOpening ? 'Hide Technical Details' : 'View Technical Details';
-      }
-    });
-  });
-
-  viewArchitectureButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const card = e.target.closest('.project-card');
-      if (!card) return;
-
-      const archContainer = card.querySelector('.project-card__architecture');
-      if (!archContainer) return;
-
-      const isOpening = !card.classList.contains('arch-open');
-
-      // Close other open project details or architectures
-      document.querySelectorAll('.project-card').forEach(otherCard => {
-        if (otherCard !== card) {
-          otherCard.classList.remove('details-open');
-          otherCard.classList.remove('arch-open');
-          const otherArch = otherCard.querySelector('.project-card__architecture');
-          if (otherArch) otherArch.style.maxHeight = '0px';
-          const otherDetailsBtn = otherCard.querySelector('.btn-toggle-details span');
-          if (otherDetailsBtn) otherDetailsBtn.textContent = 'View Technical Details';
-        }
-      });
-
-      // Close details on this card if opening architecture
-      if (isOpening) {
-        card.classList.remove('details-open');
-        const detailsBtnSpan = card.querySelector('.btn-toggle-details span');
-        if (detailsBtnSpan) detailsBtnSpan.textContent = 'View Technical Details';
-      }
-
-      card.classList.toggle('arch-open');
-
-      if (card.classList.contains('arch-open')) {
-        archContainer.style.maxHeight = archContainer.scrollHeight + 'px';
-      } else {
-        archContainer.style.maxHeight = '0px';
       }
     });
   });
@@ -608,6 +556,12 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
     
+    // Parse markdown headings
+    escaped = escaped.replace(/^#### (.*?)$/gm, '<strong>$1</strong>');
+    escaped = escaped.replace(/^### (.*?)$/gm, '<strong>$1</strong>');
+    escaped = escaped.replace(/^## (.*?)$/gm, '<strong>$1</strong>');
+    escaped = escaped.replace(/^# (.*?)$/gm, '<strong>$1</strong>');
+
     escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     escaped = escaped.replace(/`(.*?)`/g, '<code>$1</code>');
     escaped = escaped.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="chat-graph-img" style="max-width: 100%; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: block;">');
@@ -723,6 +677,83 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
+  });
+
+  // ==========================================
+  // 10. Architecture Diagram Modals & Tabs
+  // ==========================================
+  window.openArchModal = function(projectId) {
+    const modal = document.getElementById('arch-modal-' + projectId);
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Accessibility - focus close button
+      const closeBtn = modal.querySelector('.arch-modal__close');
+      if (closeBtn) closeBtn.focus();
+      
+      // Rerender mermaid diagrams if they didn't render correctly when hidden
+      if (window.mermaid) {
+        try {
+          window.mermaid.init(undefined, modal.querySelectorAll('.mermaid'));
+        } catch (e) {
+          console.error("Mermaid init error:", e);
+        }
+      }
+    }
+  };
+
+  window.closeArchModal = function(projectId) {
+    const modal = document.getElementById('arch-modal-' + projectId);
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.switchArchTab = function(projectId, tabId) {
+    const modal = document.getElementById('arch-modal-' + projectId);
+    if (!modal) return;
+
+    // Remove active class from all buttons and panels in this modal
+    const buttons = modal.querySelectorAll('.arch-tab-btn');
+    const panels = modal.querySelectorAll('.arch-tab-panel');
+
+    buttons.forEach(btn => {
+      if (btn.getAttribute('onclick').includes(tabId)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    panels.forEach(panel => {
+      if (panel.id === `${projectId}-tab-${tabId}`) {
+        panel.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+    
+    // Rerender mermaid inside active panel
+    if (window.mermaid) {
+      try {
+        window.mermaid.init(undefined, modal.querySelector(`#${projectId}-tab-${tabId} .mermaid`));
+      } catch (e) {
+        console.error("Mermaid tab switch init error:", e);
+      }
+    }
+  };
+
+  // Close modals on Escape key press
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const activeModal = document.querySelector('.arch-modal.active');
+      if (activeModal) {
+        const projectId = activeModal.id.replace('arch-modal-', '');
+        closeArchModal(projectId);
+      }
+    }
   });
 
 });

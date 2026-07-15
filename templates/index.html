@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Portfolio of Megha Raj V S — Data Scientist & AI Engineer with 1.3+ years of production experience building LLM agents, RAG pipelines, and cloud ETL systems.">
   <title>Megha Raj V S — Portfolio</title>
-  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
   
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -461,177 +459,18 @@
               </div>
             </div>
 
-            <!-- Expandable Architecture Diagram -->
-            {% if project.id in ['support-ai-agent', 'dynamic-tariff', 'client-ai-agent'] %}
-            <div class="project-card__architecture" style="position: absolute; top: -9999px; left: -9999px; visibility: hidden; width: 100%; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 0px solid var(--border-color); background-color: rgba(13, 19, 31, 0.35);">
-              <div class="project-card__details-inner" style="padding: 24px;">
-                <div class="project-card__meta-group" style="margin-bottom: 0;">
-                  <div class="project-card__meta-title">System Architecture Flow</div>
-                  <div class="project-card__meta-desc">
-                    <div style="overflow-x: auto; width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 12px; background: #070a13;">
-                      {% if project.id == 'support-ai-agent' %}
-                      <pre class="mermaid" style="min-width: 600px; margin: 0;">
-graph TB
-    subgraph ClientLayer ["Client Layer (Web UI)"]
-        ChatUI["Chat SPA (HTML/JS/CSS)"]
-        DashUI["Analytics Dashboard"]
-        AdminUI["Chat History & Bug Tracker"]
-    end
-    subgraph WebBackend ["Flask Backend (app.py)"]
-        Routes["HTTP Endpoints Handler"]
-        AuthGuard["Auth & CSRF Guards"]
-        Limiter["Rate Limiter"]
-        HistMgr["Chat History Manager"]
-        Formatter["Response Formatter"]
-    end
-    subgraph Orchestration ["Agentic Orchestrator"]
-        Pipeline["3-LLM Call Pipeline"]
-        EntityCache["Active Entity Cache"]
-        ParallelExec["Parallel Executor"]
-    end
-    subgraph ToolsAndResolvers ["Agent Tools & Resolvers"]
-        Troubleshoot["troubleshoot tool"]
-        ChargerAction["charger_action tool"]
-        UserDetails["user_details"]
-        Resolver["Charger Resolver"]
-        GeoResolver["Geo Location Resolver"]
-    end
-    subgraph KnowledgeRetrieval ["Hybrid RAG Search"]
-        ContextRet["RAG Router"]
-        BM25["BM25 Sparse Retrieval"]
-        Chroma["Chroma Vector DB"]
-        Reranker["Cross-Encoder Reranker"]
-    end
-    subgraph Datastores ["Storage & Databases"]
-        MongoDB[(MongoDB Database)]
-        LocalFiles[(Local Pickles)]
-    end
-    subgraph ExternalAPIs ["External APIs"]
-        ChargeMOD_LS["ChargeMOD LS API"]
-        ChargeMOD_TTS["ChargeMOD TTS API"]
-        OpenAI_API["OpenAI API"]
-        Bedrock_API["AWS Bedrock API"]
-    end
-    ChatUI <--> Routes
-    Routes --> AuthGuard
-    Routes --> Limiter
-    Routes --> Pipeline
-    Pipeline --> EntityCache
-    Pipeline --> ParallelExec
-    ParallelExec --> ToolsAndResolvers
-    Troubleshoot --> ChargeMOD_TTS
-    Troubleshoot --> Resolver
-    ChargerAction --> ChargeMOD_TTS
-    ChargerAction --> ChargeMOD_LS
-    Resolver -.-> RapidFuzz["RapidFuzz (local)"]
-    GeoResolver -.-> GMap_API["Google Maps API"]
-    ContextRet --> BM25
-    ContextRet --> Chroma
-    ContextRet --> Reranker
-    HistMgr <--> MongoDB
-    BM25 <--> LocalFiles
-    Pipeline <--> OpenAI_API
-    Pipeline <--> Bedrock_API
-                      </pre>
-                      {% elif project.id == 'dynamic-tariff' %}
-                      <pre class="mermaid" style="min-width: 600px; margin: 0;">
-flowchart TB
-    subgraph Data Layer [1. Data Layer & Integrations]
-        MongoDB[(MongoDB Console)]
-        pwr[(pwrtransactions)] --> MongoDB
-        cp[(chargepoints)] --> MongoDB
-        loc[(locations)] --> MongoDB
-    end
-    subgraph Forecast Layer [2. Forecasting Pipelines]
-        direction TB
-        subgraph Network Demand [Network Demand Forecasting]
-            ND_Data[7-Day Actuals Aggregator]
-            ND_Model[Winning Model Selector]
-            ND_Forecast[Hourly Network Load Predictor]
-            ND_Score[Network Score Normalizer]
-            ND_Data --> ND_Model --> ND_Forecast --> ND_Score
-        end
-        subgraph Charger Demand [Charger Demand Forecasting]
-            C_Split[Hourly Actuals Splitter]
-            C_Clust[KMeans Charger Clustering]
-            C_Feat[Lag & Calendar Feature Eng]
-            C_Model[Two-Stage Model]
-            C_Score[Charger Score Normalizer]
-            C_Split --> C_Clust --> C_Feat --> C_Model --> C_Score
-        end
-    end
-    subgraph Pricing Layer [3. Main Orchestration & Pricing]
-        direction TB
-        Main[main.py Orchestrator]
-        Filter[Alpha Location Filter]
-        Weight[Composite Score Calc]
-        Policy[Policy Params Loader]
-        Surge[Asymmetric Sigmoid Mapper]
-        Negs[Min Negatives Constraint Enforcer]
-        Main --> Filter --> Weight --> Policy --> Surge --> Negs
-    end
-    subgraph Delivery Layer [4. Payload Delivery]
-        Json[tariff_output.json]
-        API[Core API POST /tariff]
-        Backend[(Tariff Store)]
-    end
-    MongoDB --> ND_Data
-    MongoDB --> C_Split
-    MongoDB --> Filter
-    ND_Score --> Weight
-    C_Score --> Weight
-    Negs --> Json
-    Json --> API --> Backend
-                      </pre>
-                      {% elif project.id == 'client-ai-agent' %}
-                      <pre class="mermaid" style="min-width: 600px; margin: 0;">
-flowchart TD
-    classDef client fill:#070a13,stroke:#01579b,stroke-width:2px;
-    classDef app fill:#ede7f6,stroke:#4a148c,stroke-width:2px;
-    classDef logic fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
-    classDef data fill:#fff3e0,stroke:#e65100,stroke-width:2px;
-    U[User / Chat UI]:::client
-    CR[Chat Router]:::app
-    AM[Auth Middleware]:::app
-    AG[Agent Orchestrator]:::logic
-    PB[Prompt Builder]:::logic
-    LLM[LLM Engine]:::logic
-    VAL[Argument Validator]:::logic
-    EX[Tool Registry & Executors]:::logic
-    RBAC[RBAC Scoper]:::app
-    DB[(PostgreSQL Database)]:::data
-    API[External Service APIs]:::data
-    COMP[Response Composer]:::logic
-    U -->|POST /api/chat| CR
-    CR --> AM --> AG --> PB --> LLM
-    LLM --> DEC{Intent Type?}
-    DEC -->|Direct Text| COMP
-    DEC -->|Tool Request| VAL --> EX --> RBAC
-    RBAC -->|Location Filters| DB --> EX
-    RBAC -->|Remote Commands| API --> EX
-    EX --> COMP --> U
-                      </pre>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% endif %}
-
-            <div class="project-card__footer" style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="project-card__footer">
               <button class="btn-toggle-details">
                 <span>View Technical Details</span>
                 <svg viewBox="0 0 24 24">
                   <path d="M7 10l5 5 5-5H7z"/>
                 </svg>
               </button>
-              {% if project.id in ['support-ai-agent', 'dynamic-tariff', 'client-ai-agent'] %}
-              <button class="btn-view-architecture" data-project-id="{{ project.id }}">
+              
+              {% if project.id in ['support-ai-agent', 'dynamic-tariff', 'client-ai-agent', 'sales-ai', 'silentspeak', 'cartoon-generator', 'fruit-picker'] %}
+              <button type="button" class="btn-view-arch" onclick="openArchModal('{{ project.id }}')" style="margin-left: 8px;">
                 <span>View Architecture</span>
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-left: 4px; fill: currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>
               </button>
               {% endif %}
             </div>
@@ -721,8 +560,11 @@ flowchart TD
                   {% elif edu.project %}
                   <div class="career-row__desc" style="font-style: italic; margin-top: 4px;">Graduation Project: {{ edu.project }}</div>
                   {% endif %}
+                </div>
                 <div class="career-row__badge">
-                  <!-- Grade removed as requested -->
+                  {% if edu.cgpa %}CGPA: {{ edu.cgpa }}
+                  {% elif edu.percentage %}Percentage: {{ edu.percentage }}
+                  {% endif %}
                 </div>
               </div>
               {% endfor %}
@@ -985,34 +827,717 @@ flowchart TD
     </div>
   </div>
 
-  <!-- Footer Section -->
-  <footer class="footer">
-    <div class="container footer-text">
-      <p>&copy; 2026 {{ profile.name }}. Designed with a dendritic network concept.</p>
-      <p style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); font-style: italic;">
-        "Drifting nodes represent the connections we make; firing impulses represent the thoughts we share."
-      </p>
+  <!-- System Architecture Modals -->
+  <div id="arch-modal-support-ai-agent" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('support-ai-agent')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">ChargeMOD Support AI Agent Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('support-ai-agent')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__tabs">
+        <button class="arch-tab-btn active" onclick="switchArchTab('support-ai-agent', 'components')">System Components</button>
+        <button class="arch-tab-btn" onclick="switchArchTab('support-ai-agent', 'pipeline')">3-LLM Execution Pipeline</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="support-ai-agent-tab-components" class="arch-tab-panel active">
+          <div class="mermaid">
+            graph TB
+                subgraph ClientLayer ["Client Layer (Web UI)"]
+                    ChatUI["Chat SPA (HTML/JS/CSS)<br/>chatbot.html / index.html"]
+                    DashUI["Analytics Dashboard<br/>dashboard.html"]
+                    AdminUI["Chat History & Bug Tracker<br/>chathistory.html / bugs.html"]
+                end
+
+                subgraph WebBackend ["Flask Application Backend (app.py)"]
+                    Routes["HTTP Endpoints Handler<br/>/chat_stream, /action, /auth"]
+                    AuthGuard["Auth & CSRF Guards<br/>auth_key.py / cm_token"]
+                    Limiter["Rate Limiter<br/>Flask-Limiter"]
+                    HistMgr["Chat History Manager<br/>ChatHistoryManager.py"]
+                    Formatter["Response Formatter<br/>response_formatter.py"]
+                end
+
+                subgraph Orchestration ["Multi-LLM Agentic Orchestrator"]
+                    Pipeline["3-LLM Call Pipeline<br/>app.py (ask_ai_web_stream)"]
+                    EntityCache["Active Entity Cache<br/>(Anti-hallucination)"]
+                    ParallelExec["Parallel Executor<br/>concurrency.py (run_parallel)"]
+                end
+
+                subgraph ToolsAndResolvers ["Agent Tools & Resolvers"]
+                    Troubleshoot["troubleshoot tool"]
+                    ChargerAction["charger_action tool"]
+                    UserDetails["user_details tool"]
+                    Estimations["estimations tool"]
+                    FindNearby["find_nearby_chargers tool"]
+                    PlaybookTool["search_playbook tool"]
+                    
+                    Resolver["Charger Resolver<br/>tools/charger_resolver.py"]
+                    GeoResolver["Geo Location Resolver<br/>tools/geo_resolver.py"]
+                end
+
+                subgraph KnowledgeRetrieval ["Hybrid RAG Search Engine"]
+                    ContextRet["RAG Router<br/>db/context_retrieval.py"]
+                    BM25["BM25 Sparse Retrieval<br/>rank-bm25"]
+                    Chroma["Chroma Vector DB<br/>Dense Semantic Retrieval"]
+                    Reranker["Cross-Encoder Reranker<br/>ms-marco-MiniLM-L-6-v2"]
+                end
+
+                subgraph Datastores ["Storage & Databases"]
+                    MongoDB[("MongoDB Database <br/> Sessions, History & Bugs")]
+                    LocalFiles[("Local Pickles <br/> bm25_index.pkl / corpus.pkl")]
+                end
+
+                subgraph ExternalAPIs ["External Services & APIs"]
+                    ChargeMOD_LS["ChargeMOD LS API <br/> (Location Service)"]
+                    ChargeMOD_TTS["ChargeMOD TTS API <br/> (Transaction & Telemetry)"]
+                    OpenAI_API["OpenAI API <br/> (GPT-4o-mini / GPT-5-nano)"]
+                    Bedrock_API["AWS Bedrock API <br/> (Claude 3 Haiku)"]
+                    GMap_API["Google Maps API <br/> (Geocoding)"]
+                end
+
+                ChatUI <-->|HTTPS & SSE Stream| Routes
+                DashUI -->|HTTPS| Routes
+                AdminUI -->|HTTPS| Routes
+
+                Routes --> AuthGuard
+                Routes --> Limiter
+                Routes --> HistMgr
+                Routes --> Pipeline
+
+                Pipeline --> EntityCache
+                Pipeline --> ParallelExec
+                
+                ParallelExec --> ToolsAndResolvers
+
+                Troubleshoot --> ChargeMOD_TTS
+                Troubleshoot --> Resolver
+                ChargerAction --> ChargeMOD_TTS
+                ChargerAction --> ChargeMOD_LS
+                UserDetails --> ChargeMOD_TTS
+                FindNearby --> ChargeMOD_LS
+                FindNearby --> GeoResolver
+                
+                Resolver -.->|Fuzzy Logic| RapidFuzz["RapidFuzz (local)"]
+                GeoResolver -.-> GMap_API
+
+                PlaybookTool --> ContextRet
+                ContextRet --> BM25
+                ContextRet --> Chroma
+                ContextRet --> Reranker
+
+                HistMgr <--> MongoDB
+                BM25 <--> LocalFiles
+                Chroma <--> Datastores
+                EntityCache <--> MongoDB
+
+                Pipeline <--> OpenAI_API
+                Pipeline <--> Bedrock_API
+
+                style ClientLayer fill:#e8f4fd,stroke:#1d4ed8,stroke-width:2px
+                style WebBackend fill:#f0fdf4,stroke:#15803d,stroke-width:2px
+                style Orchestration fill:#fdf2f8,stroke:#be185d,stroke-width:2px
+                style ToolsAndResolvers fill:#fffbeb,stroke:#b45309,stroke-width:2px
+                style KnowledgeRetrieval fill:#faf5ff,stroke:#6b21a8,stroke-width:2px
+                style Datastores fill:#f3f4f6,stroke:#374151,stroke-width:2px
+                style ExternalAPIs fill:#f0fdfa,stroke:#0f766e,stroke-width:2px
+          </div>
+        </div>
+        <div id="support-ai-agent-tab-pipeline" class="arch-tab-panel">
+          <div class="mermaid">
+            sequenceDiagram
+                autonumber
+                actor Operator as Operator (UI Client)
+                participant Flask as Flask Backend (app.py)
+                participant SessionDB as Session Store (MongoDB)
+                participant LLM1 as Call 1: Router LLM
+                participant Tools as Parallel Tools Executor
+                participant LLM2 as Call 2: Reasoner LLM (Path A/B/C)
+                participant RAG as Hybrid RAG (Chroma + BM25)
+                participant LLM3 as Call 3: Response LLM
+                participant Formatter as Response Formatter (UI Elements)
+
+                Operator->>Flask: POST /chat_stream (user query, session_id)
+                Flask->>SessionDB: Retrieve chat history & active entities (charger, phone, etc.)
+                SessionDB-->>Flask: History, cached entities
+                Flask->>LLM1: System Prompt + Injected Entities + Query (openai/bedrock)
+                LLM1-->>Flask: Tool Calls (e.g. troubleshoot, charger_action)
+                
+                rect rgb(20, 30, 45)
+                    note over Flask, Tools: Concurrency Worker Thread
+                    Flask->>Tools: Execute identified tools concurrently via run_parallel()
+                    Tools->>Tools: Resolve inputs via charger/location resolvers (Fuzzy/Geo)
+                    Tools->>Tools: Call external ChargeMOD APIs (LS, TTS)
+                    Tools-->>Flask: Tool results (Logs, charger specs, customer profile)
+                end
+                
+                Flask->>SessionDB: Extract & persist new entities (charger ID, verified phone)
+                
+                alt If troubleshoot tool successfully fetches diagnostics
+                    Flask->>LLM2: System Prompt + troubleshoot raw data + user query (GPT-4o-mini)
+                    LLM2-->>Flask: JSON Decision (Path A, B, or C)
+                    
+                    alt Path A: Direct Answer
+                        note over Flask: Logs directly explain fault (no RAG needed)
+                    else Path B: Playbook RAG
+                        Flask->>RAG: search_playbook(symptom, charger_type, vehicle)
+                        RAG->>RAG: BM25 Sparse Search + ChromaDB Dense Search
+                        RAG->>RAG: Cross-Encoder Reranker
+                        RAG-->>Flask: Top matching SOP manuals / troubleshooting steps
+                    else Path C: Clarify / Ask Customer
+                        note over Flask: Ambiguous logs -> build multi-choice clarifying questions
+                    end
+                end
+
+                Flask->>LLM3: Final response prompt + Injected rules (AC/DC specific) + RAG/Path Context + Tool Results
+                LLM3-->>Flask: Stream final text answer (SSE)
+                
+                Flask->>Formatter: Build tables, action buttons (OTP, start/stop), suggestion chips, CSV downloads
+                Flask-->>Operator: Emit final structured JSON via SSE
+                Flask->>SessionDB: Append chat history (assistant turn, tokens, pipeline logs)
+          </div>
+        </div>
+      </div>
     </div>
-  </footer>
+  </div>
+
+  <div id="arch-modal-dynamic-tariff" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('dynamic-tariff')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">Dynamic Tariff & Pricing Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('dynamic-tariff')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__tabs">
+        <button class="arch-tab-btn active" onclick="switchArchTab('dynamic-tariff', 'flowchart')">High-Level Flow</button>
+        <button class="arch-tab-btn" onclick="switchArchTab('dynamic-tariff', 'sequence')">Execution Pipeline</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="dynamic-tariff-tab-flowchart" class="arch-tab-panel active">
+          <div class="mermaid">
+            flowchart TB
+                subgraph Data Layer [1. Data Layer & Integrations]
+                    MongoDB[(MongoDB Console)]
+                    pwr[(pwrtransactions)] --> MongoDB
+                    cp[(chargepoints)] --> MongoDB
+                    loc[(locations)] --> MongoDB
+                end
+
+                subgraph Forecast Layer [2. Forecasting Pipelines]
+                    direction TB
+                    subgraph Network Demand [Network Demand Forecasting]
+                        ND_Data["7-Day Actuals Aggregator"]
+                        ND_Model["Winning Model Selector <br/> XGBoost / RF / Prophet"]
+                        ND_Forecast["Hourly Network Load Predictor"]
+                        ND_Score["Network Score Normalizer"]
+                        ND_Data --> ND_Model --> ND_Forecast --> ND_Score
+                    end
+                    
+                    subgraph Charger Demand [Charger Demand Forecasting]
+                        C_Split["Hourly Actuals Splitter"]
+                        C_Clust["KMeans Charger Clustering"]
+                        C_Feat["Lag & Calendar Feature Eng"]
+                        C_Model["Two-Stage Model <br/> P active * conditional energy"]
+                        C_Score["Charger Score Normalizer"]
+                        C_Split --> C_Clust --> C_Feat --> C_Model --> C_Score
+                    end
+                end
+
+                subgraph Pricing Layer [3. Main Orchestration & Pricing]
+                    direction TB
+                    Main[main.py Orchestrator]
+                    Filter[Alpha Location Filter]
+                    Weight[Composite Score Calc]
+                    Policy[Policy Params Loader]
+                    Surge[Asymmetric Sigmoid Mapper]
+                    Negs[Min Negatives Constraint Enforcer]
+                    
+                    Main --> Filter
+                    Filter --> Weight
+                    Weight --> Policy
+                    Policy --> Surge
+                    Surge --> Negs
+                end
+
+                subgraph Delivery Layer [4. Payload Delivery]
+                    Json[tariff_output.json]
+                    API[Core API POST /tariff]
+                    Backend[(Tariff Store)]
+                end
+
+                MongoDB --> ND_Data
+                MongoDB --> C_Split
+                MongoDB --> Filter
+                ND_Score --> Weight
+                C_Score --> Weight
+                Negs --> Json
+                Json --> API
+                API --> Backend
+
+                style Data Layer fill:#f5f5f7,stroke:#c8c8cd
+                style Network Demand fill:#e1f5ff,stroke:#85c2ff
+                style Charger Demand fill:#fff4e1,stroke:#ffd085
+                style Pricing Layer fill:#ffe1f5,stroke:#ff85c2
+                style Delivery Layer fill:#e1ffe1,stroke:#85ff85
+          </div>
+        </div>
+        <div id="dynamic-tariff-tab-sequence" class="arch-tab-panel">
+          <div class="mermaid">
+            sequenceDiagram
+                autonumber
+                actor Cron as Scheduler
+                participant Main as Main Orchestrator (main.py)
+                participant ND as Network Demand Pipeline
+                participant CD as Charger Demand Pipeline
+                participant DB as MongoDB Instance
+                participant API as Core Backend API
+
+                Cron ->> Main: Execute Pipeline
+                Main ->> ND: Run ND_Main/main.py
+                ND ->> DB: Fetch past 7 days aggregate transactions
+                DB -->> ND: Transaction data
+                ND ->> ND: Predict hourly network load
+                ND -->> Main: Save XGB_future_predictions.csv (network_demand score)
+
+                Main ->> CD: Run Run_All_NextDay.py (AC & DC)
+                CD ->> DB: Fetch charger-level transaction actuals
+                DB -->> CD: Charger data
+                CD ->> CD: Run K-Means Clustering + two-stage inference
+                CD -->> Main: Save all_next_day_predictions.csv (charger_demand score)
+
+                Main ->> DB: Fetch Alpha-Guaranteed Location/ChargePoint mapping
+                DB -->> Main: Charger ID list
+                Main ->> Main: Merge scores, compute composite score (Weights: Charger, Network, Power, Holiday)
+                Main ->> Main: Load policy_params.json
+                Main ->> Main: Apply Asymmetric Sigmoid Surge & Min-Discounts Constraints
+                Main ->> Main: Format JSON Payload (organizationId, hourlyBreakdownSurges)
+                Main ->> API: POST /tariff (per active charger payload)
+                API -->> Main: 200 OK / Response confirmation
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="arch-modal-client-ai-agent" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('client-ai-agent')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">Client AI Agent Analytics System Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('client-ai-agent')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="client-ai-agent-tab-lifecycle" class="arch-tab-panel active">
+          <div class="mermaid">
+            flowchart TD
+                classDef client fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+                classDef app fill:#ede7f6,stroke:#4a148c,stroke-width:2px;
+                classDef logic fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
+                classDef data fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+                
+                U["User / Chat UI"]:::client
+                CR["Chat Router <br/> app/routers/chat.py"]:::app
+                AM["Auth Middleware <br/> app/middleware/auth.py"]:::app
+                AG["Agent Orchestrator <br/> app/agent/agent.py"]:::logic
+                PB["Prompt Builder <br/> app/agent/prompt_builder.py"]:::logic
+                LLM["LLM Engine <br/> Gemini / OpenAI API"]:::logic
+                DEC{"Intent Type?"}:::logic
+                VAL["Argument Validator <br/> Pydantic schemas"]:::logic
+                EX["Tool Registry & Executors <br/> app/tools/*"]:::logic
+                RBAC["RBAC Scoper <br/> apply_location_scope"]:::app
+                DB[("PostgreSQL Database")]:::data
+                API["External Service APIs <br/> Logs, Chargepoint Status"]:::data
+                COMP["Response Composer <br/> response_composer.py"]:::logic
+
+                U -->|POST /api/chat| CR
+                CR -->|Verify Cookie Token| AM
+                AM -->|Session Context| AG
+                AG -->|Assemble Prompt & Tools| PB
+                PB -->|System + User + Few-shot| LLM
+                LLM -->|Text or JSON Tool Call| DEC
+                
+                DEC -->|Direct Text / Guardrail| COMP
+                DEC -->|Tool Request| VAL
+                
+                VAL -->|Valid Arguments| EX
+                EX -->|Location Verification| RBAC
+                RBAC -->|Enforce Location Filters| DB
+                RBAC -->|Remote Start/Stop/Logs| API
+                
+                DB -->|Raw Records| EX
+                API -->|API Response| EX
+                EX -->|Structured Output| COMP
+                COMP -->|Text Summary + Charts/JSON| U
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="arch-modal-sales-ai" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('sales-ai')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">SalesAI Site Feasibility & Proposal Agent Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('sales-ai')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__tabs">
+        <button class="arch-tab-btn active" onclick="switchArchTab('sales-ai', 'system')">System Flow</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="sales-ai-tab-system" class="arch-tab-panel active">
+          <div class="mermaid">
+            graph TD
+                classDef client fill:#0d1117,stroke:#30363d,stroke-width:2px,color:#c9d1d9;
+                classDef core fill:#1e293b,stroke:#f97316,stroke-width:2px,color:#f8fafc;
+                classDef tool fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#e2e8f0;
+                classDef storage fill:#090d16,stroke:#10b981,stroke-width:2px,color:#e2e8f0;
+                classDef obs fill:#2e1515,stroke:#ef4444,stroke-width:2px,color:#f8fafc;
+
+                UI[HTML / JS Client Widget]:::client
+                API[FastAPI Gateway]:::core
+                Auth[Auth Middleware Depends]:::core
+                RateLim[Rate Limiter Middleware]:::core
+                
+                subgraph "Orchestration & Flow"
+                    Flow[CrewAI Flow Manager]:::core
+                    State[Flow State Serialization]:::storage
+                    Prompt[Prompt Builder / Fragments]:::core
+                    Crew[Sequential Crew: 4 Agents]:::core
+                end
+                
+                subgraph "Tool Packages"
+                    Geo[Geolocation Service<br>Google Geocoding & Places]:::tool
+                    Market[Market Analyst Service<br>RTO Distances & EV Regs]:::tool
+                    Finance[Financial Analyst Service<br>Payback & Matplotlib ROI]:::tool
+                    Knowledge[Knowledge Search Tool<br>Chroma Specs Search]:::tool
+                    Proposal[Proposal Service<br>python-docx & reportlab]:::tool
+                end
+
+                subgraph "Data Storage"
+                    Postgres[(PostgreSQL DB<br>Users & EV Counts)]:::storage
+                    Mongo[(MongoDB<br>Sessions, States & Cache)]:::storage
+                    Chroma[(ChromaDB<br>Specs & Past Proposals)]:::storage
+                end
+
+                Metrics[Prometheus metrics]:::obs
+                Logs[structlog JSON Logs]:::obs
+                Scheduler[APScheduler Service]:::obs
+
+                UI -- "1. Send Chat POST /chat/message" --> API
+                API --> Auth
+                Auth --> RateLim
+                RateLim -- "2. Validated Request" --> Flow
+                
+                Flow -- "3. Get/Update state" --> State
+                State -- "motor client" --> Mongo
+                
+                Flow -- "4. Assemble system prompt" --> Prompt
+                Prompt -- "Concatenate fragments" --> Flow
+                Flow -- "5. (P1) Flow / (P2) Crew loop" --> Crew
+                
+                Crew -- "6. Execute actions" --> Geo
+                Crew -- "6. Execute actions" --> Market
+                Crew -- "6. Execute actions" --> Finance
+                Crew -- "6. Execute actions" --> Knowledge
+                Crew -- "7. Generate branded files" --> Proposal
+                
+                Geo -- "Read/Write TTL cache" --> Mongo
+                Market -- "Query distance / stats" --> Postgres
+                Market -- "Query fleet cross-ref" --> Mongo
+                Finance -- "Matplotlib plot ROI" --> Finance
+                Knowledge -- "Query documents" --> Chroma
+                Proposal -- "Retrieve similar / specs" --> Knowledge
+                Proposal -- "Embed ROI plot" --> Proposal
+                
+                Scheduler -- "Nightly RTO refresh" --> Postgres
+                API --> Metrics
+                API --> Logs
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="arch-modal-silentspeak" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('silentspeak')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">SilentSpeak: Visual Speech Recognition Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('silentspeak')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__tabs">
+        <button class="arch-tab-btn active" onclick="switchArchTab('silentspeak', 'pipeline')">Preprocessing & Pipeline</button>
+        <button class="arch-tab-btn" onclick="switchArchTab('silentspeak', 'shapes')">Shape Transformations</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="silentspeak-tab-pipeline" class="arch-tab-panel active">
+          <div class="mermaid">
+            flowchart LR
+                classDef input fill:#f5f5f7,stroke:#c8c8cd,stroke-width:2px;
+                classDef prep fill:#e1f5ff,stroke:#85c2ff,stroke-width:2px;
+                classDef model fill:#ffe1f5,stroke:#ff85c2,stroke-width:2px;
+                classDef eval fill:#e1ffe1,stroke:#85ff85,stroke-width:2px;
+
+                A["🎥 Input Video"]:::input
+                B["Extract 75 Frames"]:::prep
+                C["Face Detection"]:::prep
+                D["Mouth ROI Cropping"]:::prep
+                E["Resize to 46 × 140"]:::prep
+                F["Convert to Grayscale"]:::prep
+                G["Normalize Pixel Values"]:::prep
+
+                subgraph CNN["3D CNN - Spatiotemporal Feature Extraction"]
+                    H1["Conv3D <br/> 128 Filters"]:::model
+                    H2["ReLU"]:::model
+                    H3["MaxPooling3D"]:::model
+                    I1["Conv3D <br/> 256 Filters"]:::model
+                    I2["ReLU"]:::model
+                    I3["MaxPooling3D"]:::model
+                    J1["Conv3D <br/> 75 Filters"]:::model
+                    J2["ReLU"]:::model
+                    J3["MaxPooling3D"]:::model
+                    K["Reshape"]:::model
+                    L["TimeDistributed Flatten"]:::model
+                end
+
+                subgraph BILSTM["Bi-LSTM - Temporal Modeling"]
+                    M["Bidirectional LSTM"]:::model
+                    N["Forward Context"]:::model
+                    O["Backward Context"]:::model
+                    P["Concatenate Features"]:::model
+                end
+
+                subgraph CTC["Connectionist Temporal Classification"]
+                    Q["TimeDistributed Dense"]:::model
+                    R["Softmax"]:::model
+                    S["CTC Loss"]:::model
+                    T["CTC Decoder"]:::model
+                end
+
+                U["📝 Predicted Sentence"]:::prep
+                V["CER"]:::eval
+                W["WER"]:::eval
+                X["SER"]:::eval
+                Y["BLEU Score"]:::eval
+
+                A --> B --> C --> D --> E --> F --> G
+                G --> H1 --> H2 --> H3
+                H3 --> I1 --> I2 --> I3
+                I3 --> J1 --> J2 --> J3
+                J3 --> K --> L
+                L --> M
+                M --> N
+                M --> O
+                N --> P
+                O --> P
+                P --> Q --> R --> S --> T
+                T --> U
+                U --> V
+                U --> W
+                U --> X
+                U --> Y
+          </div>
+        </div>
+        <div id="silentspeak-tab-shapes" class="arch-tab-panel">
+          <div class="table-responsive" style="overflow-x: auto; margin-top: 16px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; color: var(--text-primary);">
+              <thead>
+                <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--signal);">
+                  <th style="padding: 12px 16px;">Stage</th>
+                  <th style="padding: 12px 16px;">Shape</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Input Video</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">Variable</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Extracted Frames</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">75 Frames</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Mouth ROI</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">46 × 140</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Input Tensor</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">75 × 46 × 140 × 1</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Conv3D-1 Output</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">75 × 46 × 140 × 128</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Conv3D-2 Output</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">75 × 23 × 70 × 256</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Conv3D-3 Output</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">75 × 11 × 35 × 75</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Reshape</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">75 × 6375</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Bi-LSTM Output</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">Temporal Features</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">Dense + Softmax</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">Character Probabilities</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                  <td style="padding: 12px 16px; font-weight: 500;">CTC Decoder</td>
+                  <td style="padding: 12px 16px; font-family: monospace;">Predicted Text</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="arch-modal-cartoon-generator" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('cartoon-generator')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">Image Processing-based Cartoon Generator Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('cartoon-generator')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__tabs">
+        <button class="arch-tab-btn active" onclick="switchArchTab('cartoon-generator', 'pipeline')">Cartoon Generation Pipeline</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="cartoon-generator-tab-pipeline" class="arch-tab-panel active">
+          <div class="mermaid">
+            flowchart TD
+                classDef input fill:#f5f5f7,stroke:#c8c8cd,stroke-width:2px;
+                classDef edges fill:#e1f5ff,stroke:#85c2ff,stroke-width:2px;
+                classDef color fill:#fff4e1,stroke:#ffd085,stroke-width:2px;
+                classDef merge fill:#ffe1f5,stroke:#ff85c2,stroke-width:2px;
+                classDef output fill:#e1ffe1,stroke:#85ff85,stroke-width:2px;
+
+                Input["🖼️ Original Image"]:::input
+
+                subgraph EdgeExtraction["Edge Extraction"]
+                    Gray["Grayscale Conversion"]:::edges
+                    Noise["Noise Removal"]:::edges
+                    Edge["Edge Detection"]:::edges
+                    Dilate["Dilation"]:::edges
+                end
+
+                subgraph ColorQuantization["Colour Quantization"]
+                    RGB["RGB Channel Separation"]:::color
+                    Filter["Average Filtering"]:::color
+                    Quantize["Colour Quantization"]:::color
+                    Merge["Merge RGB Channels"]:::color
+                end
+
+                Combine["Combine Edge Mask with Quantized Image"]:::merge
+                Output["🎨 Cartoon Image"]:::output
+
+                Input --> Gray
+                Input --> RGB
+                Gray --> Noise --> Edge --> Dilate
+                RGB --> Filter --> Quantize --> Merge
+                Dilate --> Combine
+                Merge --> Combine
+                Combine --> Output
+
+                style EdgeExtraction fill:#e1f5ff0d,stroke:#85c2ff
+                style ColorQuantization fill:#fff4e10d,stroke:#ffd085
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="arch-modal-fruit-picker" class="arch-modal">
+    <div class="arch-modal__backdrop" onclick="closeArchModal('fruit-picker')"></div>
+    <div class="arch-modal__content">
+      <div class="arch-modal__header">
+        <h3 class="arch-modal__title">Autonomous Fruit Picker Robot Architecture</h3>
+        <button class="arch-modal__close" onclick="closeArchModal('fruit-picker')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="arch-modal__body">
+        <div id="fruit-picker-tab-components" class="arch-tab-panel active">
+          <div class="mermaid">
+            flowchart TD
+                classDef sys fill:#f57c00,stroke:#e65100,stroke-width:2px,color:#fff;
+                classDef sub fill:#0288d1,stroke:#01579b,stroke-width:2px,color:#fff;
+                classDef comp fill:#eceff1,stroke:#37474f,stroke-width:2px,color:#000;
+
+                System["🍎 Fruit Picker Robot"]:::sys
+                Controller["ESP32-WROOM Controller"]:::comp
+                LED["RGB Status LED"]:::comp
+
+                subgraph Mobile["🚗 Mobile Robot"]
+                    Ultra["HC-SR04 Ultrasonic Sensor"]:::comp
+                    Driver["L298N Motor Driver"]:::comp
+                    Motor["DC Motors"]:::comp
+                    Wheel["Wheels & Chassis"]:::comp
+                end
+
+                subgraph Arm["🦾 Robotic Arm"]
+                    Servo["SG90 Servo Motors"]:::comp
+                    Link["Mechanical Links"]:::comp
+                    Gripper["Fruit Gripper"]:::comp
+                end
+
+                subgraph Power["🔋 Power System"]
+                    Battery["3.7V Rechargeable Battery"]:::comp
+                    Charging["Charging Module"]:::comp
+                end
+
+                Detect["Navigate Plantation"]:::comp
+                Locate["Detect Fruit"]:::comp
+                Pick["Pick Fruit"]:::comp
+                Basket["Place in Basket"]:::comp
+
+                Ultra --> Driver
+                Driver --> Motor
+                Motor --> Wheel
+
+                Servo --> Link
+                Link --> Gripper
+
+                Battery --> Charging
+
+                System --> Controller
+                Controller --> Mobile
+                Controller --> Arm
+                Controller --> LED
+                Power --> Controller
+
+                Wheel --> Detect
+                Detect --> Locate
+                Locate --> Pick
+                Pick --> Basket
+
+                style Mobile fill:#0288d10d,stroke:#01579b
+                style Arm fill:#be185d0d,stroke:#be185d
+                style Power fill:#2e7d320d,stroke:#1b5e20
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- JS Scripts -->
-  <script src="{{ url_for('static', filename='js/neurons.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/portrait-vortex.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
-    
-    // Once page loads and Mermaid renders, collapse the architecture containers
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        document.querySelectorAll('.project-card__architecture').forEach(arch => {
-          arch.style.position = 'static';
-          arch.style.visibility = 'visible';
-          arch.style.maxHeight = '0px';
-        });
-      }, 300);
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: { useMaxWidth: true, htmlLabels: true }
     });
   </script>
+  <script src="{{ url_for('static', filename='js/neurons.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

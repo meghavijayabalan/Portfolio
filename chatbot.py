@@ -305,19 +305,19 @@ def explain_skill_or_keyword(message: str) -> str:
             proj_list = []
             for p in matching_projects:
                 proj_list.append(
-                    f"### {p['title']} ({p['category']})\n"
+                    f"**{p['title']}** ({p['category']})\n"
                     f"- **Application**: {p['description']}\n"
                     f"- **Methodology**: {p['methodology']}\n"
                     f"- **Metrics/Impact**: {p['metrics']}"
                 )
-            response += "#### Projects:\n" + "\n\n".join(proj_list) + "\n\n"
+            response += "**Projects:**\n" + "\n\n".join(proj_list) + "\n\n"
             
         if matching_exp:
             exp_list = []
             for exp, bullets in matching_exp:
                 bullets_str = "\n".join([f"  * {b}" for b in bullets])
                 exp_list.append(f"- **{exp['role']}** at **{exp['company']}**:\n{bullets_str}")
-            response += "#### Professional Experience:\n" + "\n".join(exp_list)
+            response += "**Professional Experience:**\n" + "\n".join(exp_list)
             
         return response
         

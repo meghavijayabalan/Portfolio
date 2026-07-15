@@ -177,6 +177,19 @@ PROJECTS = [
         "tech_stack": ["Python", "LangChain", "OpenAI API", "PostgreSQL", "Redis", "LLM Tool Calling"],
         "badge": "Generative AI"
     },
+    {
+        "id": "sales-ai",
+        "title": "SalesAI: Site Feasibility & Proposal Agent",
+        "category": "Production Project (ChargeMOD)",
+        "description": "An enterprise agentic system conducting site-feasibility assessments and generating branded proposals using multi-agent CrewAI orchestration.",
+        "methodology": (
+            "Executes a 5-step analysis pipeline: Geolocation parameter extraction, financial model evaluation (payback term & ROI plotting), ChromaDB product spec search, and python-docx proposal compilation."
+        ),
+        "dataset": "Google Maps Places API, fleet metrics from MongoDB, and regional EV counts in PostgreSQL.",
+        "metrics": "Automated the generation of highly accurate 15-page PDF proposals, reducing sales engineering turnaround times from 3 days to under 5 minutes.",
+        "tech_stack": ["Python", "CrewAI", "FastAPI", "MongoDB", "PostgreSQL", "ChromaDB", "Matplotlib"],
+        "badge": "AI Engineering"
+    },
     # Existing academic projects
     {
         "id": "silentspeak",
@@ -276,6 +289,7 @@ EDUCATION = [
         "specialization": "Digital Image Computing",
         "institution": "Kerala University, Karyavattom",
         "period": "2023 – 2025",
+        "cgpa": "8.98",
         "thesis": "SilentSpeak: Visual Speech Recognition using Deep Learning",
     },
     {
@@ -283,6 +297,7 @@ EDUCATION = [
         "specialization": None,
         "institution": "University College of Engineering, Karyavattom",
         "period": "2019 – 2023",
+        "cgpa": "8.23",
         "project": "Fruit Picker Robot using ESP32 & IoT Automation",
     },
     {
@@ -290,12 +305,14 @@ EDUCATION = [
         "specialization": None,
         "institution": "Sree Vidhyadhiraja Vidhya Mandir, Vellayambalam",
         "period": "2017 – 2019",
+        "percentage": "92%",
     },
     {
         "degree": "SSLC",
         "specialization": None,
         "institution": "Trinity English & Malayalam Medium School",
         "period": "2016 – 2017",
+        "percentage": "95%",
     }
 ]
 
