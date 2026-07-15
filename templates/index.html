@@ -463,7 +463,7 @@
 
             <!-- Expandable Architecture Diagram -->
             {% if project.id in ['support-ai-agent', 'dynamic-tariff', 'client-ai-agent'] %}
-            <div class="project-card__architecture" style="max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 0px solid var(--border-color); background-color: rgba(13, 19, 31, 0.35);">
+            <div class="project-card__architecture" style="position: absolute; top: -9999px; left: -9999px; visibility: hidden; width: 100%; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 0px solid var(--border-color); background-color: rgba(13, 19, 31, 0.35);">
               <div class="project-card__details-inner" style="padding: 24px;">
                 <div class="project-card__meta-group" style="margin-bottom: 0;">
                   <div class="project-card__meta-title">System Architecture Flow</div>
@@ -1002,6 +1002,17 @@ flowchart TD
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    
+    // Once page loads and Mermaid renders, collapse the architecture containers
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelectorAll('.project-card__architecture').forEach(arch => {
+          arch.style.position = 'static';
+          arch.style.visibility = 'visible';
+          arch.style.maxHeight = '0px';
+        });
+      }, 300);
+    });
   </script>
 </body>
 </html>
