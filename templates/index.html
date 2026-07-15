@@ -721,11 +721,8 @@ flowchart TD
                   {% elif edu.project %}
                   <div class="career-row__desc" style="font-style: italic; margin-top: 4px;">Graduation Project: {{ edu.project }}</div>
                   {% endif %}
-                </div>
                 <div class="career-row__badge">
-                  {% if edu.cgpa %}CGPA: {{ edu.cgpa }}
-                  {% elif edu.percentage %}Percentage: {{ edu.percentage }}
-                  {% endif %}
+                  <!-- Grade removed as requested -->
                 </div>
               </div>
               {% endfor %}

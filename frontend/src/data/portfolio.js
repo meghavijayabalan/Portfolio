@@ -38,7 +38,6 @@ export const education = [
     bullets: [
       "Specialization: Digital Image Computing.",
       "Thesis: SilentSpeak — Visual Speech Recognition using Deep Learning.",
-      "CGPA: 8.98.",
     ],
   },
   {
@@ -47,20 +46,19 @@ export const education = [
     org: "University College of Engineering, Karyavattom",
     bullets: [
       "Graduation Project: Fruit Picker Robot using ESP32 & IoT Automation.",
-      "CGPA: 8.23.",
     ],
   },
   {
     when: "2017 – 2019",
     role: "Higher Secondary (Plus Two)",
     org: "Sree Vidhyadhiraja Vidhya Mandir, Vellayambalam",
-    bullets: ["Percentage: 92%."],
+    bullets: [],
   },
   {
     when: "2016 – 2017",
     role: "SSLC",
     org: "Trinity English & Malayalam Medium School",
-    bullets: ["Percentage: 95%."],
+    bullets: [],
   },
 ];
 

@@ -276,7 +276,6 @@ EDUCATION = [
         "specialization": "Digital Image Computing",
         "institution": "Kerala University, Karyavattom",
         "period": "2023 – 2025",
-        "cgpa": "8.98",
         "thesis": "SilentSpeak: Visual Speech Recognition using Deep Learning",
     },
     {
@@ -284,7 +283,6 @@ EDUCATION = [
         "specialization": None,
         "institution": "University College of Engineering, Karyavattom",
         "period": "2019 – 2023",
-        "cgpa": "8.23",
         "project": "Fruit Picker Robot using ESP32 & IoT Automation",
     },
     {
@@ -292,14 +290,12 @@ EDUCATION = [
         "specialization": None,
         "institution": "Sree Vidhyadhiraja Vidhya Mandir, Vellayambalam",
         "period": "2017 – 2019",
-        "percentage": "92%",
     },
     {
         "degree": "SSLC",
         "specialization": None,
         "institution": "Trinity English & Malayalam Medium School",
         "period": "2016 – 2017",
-        "percentage": "95%",
     }
 ]
 
