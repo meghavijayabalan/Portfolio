@@ -176,7 +176,6 @@
                   <img src="{{ url_for('static', filename='images/profile-nobg.png') }}" alt="{{ profile.name }}">
                 </div>
               </div>
-              <canvas id="portrait-vortex-canvas" class="portrait-vortex"></canvas>
             </div>
           </div>
         </div>
@@ -454,11 +453,23 @@
                   <div class="project-card__meta-title">Metrics & Impact</div>
                   <div class="project-card__meta-desc">{{ project.metrics }}</div>
                 </div>
-                {% if project.id == 'support-ai-agent' %}
-                <div class="project-card__meta-group">
+                <div class="project-card__tech">
+                  {% for tech in project.tech_stack %}
+                  <span class="project-card__tech-chip">{{ tech }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Expandable Architecture Diagram -->
+            {% if project.id in ['support-ai-agent', 'dynamic-tariff', 'client-ai-agent'] %}
+            <div class="project-card__architecture" style="max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border-top: 0px solid var(--border-color); background-color: rgba(13, 19, 31, 0.35);">
+              <div class="project-card__details-inner" style="padding: 24px;">
+                <div class="project-card__meta-group" style="margin-bottom: 0;">
                   <div class="project-card__meta-title">System Architecture Flow</div>
                   <div class="project-card__meta-desc">
-                    <div style="overflow-x: auto; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; background: #070a13;">
+                    <div style="overflow-x: auto; width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 12px; background: #070a13;">
+                      {% if project.id == 'support-ai-agent' %}
                       <pre class="mermaid" style="min-width: 600px; margin: 0;">
 graph TB
     subgraph ClientLayer ["Client Layer (Web UI)"]
@@ -522,14 +533,7 @@ graph TB
     Pipeline <--> OpenAI_API
     Pipeline <--> Bedrock_API
                       </pre>
-                    </div>
-                  </div>
-                </div>
-                {% elif project.id == 'dynamic-tariff' %}
-                <div class="project-card__meta-group">
-                  <div class="project-card__meta-title">System Architecture Flow</div>
-                  <div class="project-card__meta-desc">
-                    <div style="overflow-x: auto; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; background: #070a13;">
+                      {% elif project.id == 'dynamic-tariff' %}
                       <pre class="mermaid" style="min-width: 600px; margin: 0;">
 flowchart TB
     subgraph Data Layer [1. Data Layer & Integrations]
@@ -579,14 +583,7 @@ flowchart TB
     Negs --> Json
     Json --> API --> Backend
                       </pre>
-                    </div>
-                  </div>
-                </div>
-                {% elif project.id == 'client-ai-agent' %}
-                <div class="project-card__meta-group">
-                  <div class="project-card__meta-title">System Architecture Flow</div>
-                  <div class="project-card__meta-desc">
-                    <div style="overflow-x: auto; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; background: #070a13;">
+                      {% elif project.id == 'client-ai-agent' %}
                       <pre class="mermaid" style="min-width: 600px; margin: 0;">
 flowchart TD
     classDef client fill:#070a13,stroke:#01579b,stroke-width:2px;
@@ -614,25 +611,29 @@ flowchart TD
     RBAC -->|Remote Commands| API --> EX
     EX --> COMP --> U
                       </pre>
+                      {% endif %}
                     </div>
                   </div>
                 </div>
-                {% endif %}
-                <div class="project-card__tech">
-                  {% for tech in project.tech_stack %}
-                  <span class="project-card__tech-chip">{{ tech }}</span>
-                  {% endfor %}
-                </div>
               </div>
             </div>
+            {% endif %}
 
-            <div class="project-card__footer">
+            <div class="project-card__footer" style="display: flex; flex-direction: column; gap: 8px;">
               <button class="btn-toggle-details">
                 <span>View Technical Details</span>
                 <svg viewBox="0 0 24 24">
                   <path d="M7 10l5 5 5-5H7z"/>
                 </svg>
               </button>
+              {% if project.id in ['support-ai-agent', 'dynamic-tariff', 'client-ai-agent'] %}
+              <button class="btn-view-architecture" data-project-id="{{ project.id }}">
+                <span>View Architecture</span>
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+                </svg>
+              </button>
+              {% endif %}
             </div>
           </div>
           {% endfor %}

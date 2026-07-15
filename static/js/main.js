@@ -125,9 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================
-  // 5. Project Card Collapsible Details Toggle
+  // 5. Project Card Collapsible Details & Architecture Toggle
   // ==========================================
   const toggleDetailsButtons = document.querySelectorAll('.btn-toggle-details');
+  const viewArchitectureButtons = document.querySelectorAll('.btn-view-architecture');
 
   toggleDetailsButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -136,18 +137,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const isOpening = !card.classList.contains('details-open');
       
-      // Close other open project cards
-      document.querySelectorAll('.project-card.details-open').forEach(openCard => {
-        if (openCard !== card) {
-          openCard.classList.remove('details-open');
+      // Close other open project details or architectures
+      document.querySelectorAll('.project-card').forEach(otherCard => {
+        if (otherCard !== card) {
+          otherCard.classList.remove('details-open');
+          otherCard.classList.remove('arch-open');
+          const otherArch = otherCard.querySelector('.project-card__architecture');
+          if (otherArch) otherArch.style.maxHeight = '0px';
+          const otherDetailsBtn = otherCard.querySelector('.btn-toggle-details span');
+          if (otherDetailsBtn) otherDetailsBtn.textContent = 'View Technical Details';
         }
       });
+
+      // Close architecture drawer on this card if opening details
+      if (isOpening) {
+        card.classList.remove('arch-open');
+        const arch = card.querySelector('.project-card__architecture');
+        if (arch) arch.style.maxHeight = '0px';
+      }
 
       card.classList.toggle('details-open');
 
       const textSpan = btn.querySelector('span');
       if (textSpan) {
         textSpan.textContent = isOpening ? 'Hide Technical Details' : 'View Technical Details';
+      }
+    });
+  });
+
+  viewArchitectureButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const card = e.target.closest('.project-card');
+      if (!card) return;
+
+      const archContainer = card.querySelector('.project-card__architecture');
+      if (!archContainer) return;
+
+      const isOpening = !card.classList.contains('arch-open');
+
+      // Close other open project details or architectures
+      document.querySelectorAll('.project-card').forEach(otherCard => {
+        if (otherCard !== card) {
+          otherCard.classList.remove('details-open');
+          otherCard.classList.remove('arch-open');
+          const otherArch = otherCard.querySelector('.project-card__architecture');
+          if (otherArch) otherArch.style.maxHeight = '0px';
+          const otherDetailsBtn = otherCard.querySelector('.btn-toggle-details span');
+          if (otherDetailsBtn) otherDetailsBtn.textContent = 'View Technical Details';
+        }
+      });
+
+      // Close details on this card if opening architecture
+      if (isOpening) {
+        card.classList.remove('details-open');
+        const detailsBtnSpan = card.querySelector('.btn-toggle-details span');
+        if (detailsBtnSpan) detailsBtnSpan.textContent = 'View Technical Details';
+      }
+
+      card.classList.toggle('arch-open');
+
+      if (card.classList.contains('arch-open')) {
+        archContainer.style.maxHeight = archContainer.scrollHeight + 'px';
+      } else {
+        archContainer.style.maxHeight = '0px';
       }
     });
   });

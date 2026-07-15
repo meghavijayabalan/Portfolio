@@ -1478,6 +1478,42 @@ section {
   color: var(--signal);
 }
 
+.btn-view-architecture {
+  width: 100%;
+  background-color: rgba(82, 183, 60, 0.1);
+  border: 1px solid rgba(82, 183, 60, 0.3);
+  border-radius: var(--border-radius-sm);
+  padding: 10px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--signal);
+  transition: var(--transition-smooth);
+}
+
+.btn-view-architecture:hover {
+  background-color: var(--signal);
+  color: var(--bg-void);
+  border-color: var(--signal);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.btn-view-architecture svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.project-card.arch-open .btn-view-architecture {
+  border-color: var(--signal);
+  background-color: var(--signal);
+  color: var(--bg-void);
+}
+
 /* ===========================
    Education Section
    =========================== */
