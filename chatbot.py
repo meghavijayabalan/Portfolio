@@ -366,7 +366,7 @@ def get_chat_response(message: str) -> str:
 
     # notice period checks
     if "notice" in message_lc:
-        if any(kw in message_lc for kw in ["how many days", "duration", "how long", "how much", "days", "month", "period"]):
+        if any(kw in message_lc for kw in ["how many", "duration", "how long", "how much", "days", "month", "number"]):
             return "Megha Raj's notice period is **30 days (1 month)**."
         return "No, currently Megha is **not on a notice period** (she is working at ChargeMOD)."
 
