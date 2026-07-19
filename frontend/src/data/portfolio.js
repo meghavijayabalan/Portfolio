@@ -3,6 +3,7 @@ export const experience = [
     when: "May 2025 – Present",
     role: "Data Scientist",
     org: "ChargeMOD",
+    link: "https://chargemod.com/",
     duration: "1.3+ Years",
     bullets: [
       "Lead AI and machine learning development, architecting production-grade LLM agents, dynamic demand forecasting networks, and automated serverless ETL data pipelines.",
@@ -14,6 +15,7 @@ export const experience = [
     when: "Mar 2024 – May 2024",
     role: "Data Science Intern",
     org: "ChargeMOD",
+    link: "https://chargemod.com/",
     duration: "3 Months",
     bullets: [
       "Developed an EV Assistant Chatbot using OpenAI function calling, embedding-based retrieval, dynamic entity extraction, and real-time SSE streaming — evolved into the production Customer Support AI Agent.",
@@ -23,6 +25,7 @@ export const experience = [
     when: "Jun 2022 – May 2024",
     role: "RPA Data Analyst",
     org: "Software Incubator Pvt. Ltd.",
+    link: "https://softincubator.com/career.html",
     duration: "2 Years",
     bullets: [
       "Automated document extraction and data processing workflows using JavaScript, Puppeteer, and Kofax; built browser automation pipelines for structured web scraping and data indexing into MySQL databases.",
@@ -35,6 +38,7 @@ export const education = [
     when: "2023 – 2025",
     role: "M.Tech in Computer Science",
     org: "Kerala University, Karyavattom",
+    link: "https://www.dcsku.org/",
     bullets: [
       "Specialization: Digital Image Computing.",
       "Thesis: SilentSpeak — Visual Speech Recognition using Deep Learning.",
@@ -44,6 +48,7 @@ export const education = [
     when: "2019 – 2023",
     role: "B.Tech in Computer Science and Engineering",
     org: "University College of Engineering, Karyavattom",
+    link: "https://uck.ac.in/",
     bullets: [
       "Graduation Project: Fruit Picker Robot using ESP32 & IoT Automation.",
     ],
@@ -52,12 +57,14 @@ export const education = [
     when: "2017 – 2019",
     role: "Higher Secondary (Plus Two)",
     org: "Sree Vidhyadhiraja Vidhya Mandir, Vellayambalam",
+    link: "https://svvmhssvellayambalam.com/",
     bullets: [],
   },
   {
     when: "2016 – 2017",
     role: "SSLC",
     org: "Trinity English & Malayalam Medium School",
+    link: "https://www.lfcsstate.com/contact-us/index.html",
     bullets: [],
   },
 ];
@@ -248,6 +255,13 @@ export const skills = [
 ];
 
 export const certifications = [
+  {
+    title: "Java Full Stack Certification",
+    issuer: "Faith InfoTech Academy",
+    link: "https://faithinfotechacademy.com/",
+    year: "2022",
+    tag: "Programming",
+  },
   {
     title: "The Complete Python Bootcamp: From Zero to Hero",
     issuer: "Udemy",

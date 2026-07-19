@@ -343,6 +343,24 @@ def get_chat_response(message: str) -> str:
     """
     message_lc = message.lower()
     
+    # Intercept specific company questions
+    if "chargemod" in message_lc:
+        return (
+            "Megha Raj V S has worked at **[ChargeMOD](https://chargemod.com/)** in the following roles:\n\n"
+            "- **Data Scientist** (May 2025 - Present):\n"
+            "  * Lead AI and machine learning development, architecting production-grade LLM agents, dynamic demand forecasting networks, and automated serverless ETL data pipelines.\n"
+            "  * Deploy anti-hallucination guardrails, Redis query caching, and robust security measures structurally preventing cross-account access at the database layer.\n"
+            "  * Design daily Power BI dashboard streams and automated diagnostic monitoring consoles, cutting cloud costs by 95% and operational downtime by 20%.\n\n"
+            "- **Data Science Intern** (Mar 2024 - May 2024):\n"
+            "  * Developed an EV Assistant Chatbot using OpenAI function calling, embedding-based retrieval, dynamic entity extraction, and real-time SSE streaming for route optimisation and live charger discovery; the project evolved into the production Customer Support AI Agent."
+        )
+    elif "software incubator" in message_lc or "softincubator" in message_lc or "soft incubator" in message_lc:
+        return (
+            "Megha Raj V S worked at **[Software Incubator Pvt. Ltd.](https://softincubator.com/career.html)** in the following role:\n\n"
+            "- **RPA Data Analyst** (Jun 2022 - May 2024):\n"
+            "  * Automated document extraction and data processing workflows using JavaScript, Puppeteer, and Kofax; built browser automation pipelines for structured web scraping and data indexing into MySQL databases."
+        )
+
     if not is_on_topic(message):
         return (
             "I only talk about Megha Raj's work — experience, skills, projects, "
@@ -494,7 +512,15 @@ def get_chat_response(message: str) -> str:
         for e in profile_data.EXPERIENCE:
             current_tag = " (Current Role)" if e["is_current"] else ""
             desc_bullet = "\n".join([f"  * {bullet}" for bullet in e["description"]])
-            exp_details.append(f"- **{e['role']}** at {e['company']} ({e['period']}){current_tag}:\n{desc_bullet}")
+            
+            # Format company name with clickable links
+            company_name = e['company']
+            if "chargemod" in company_name.lower():
+                company_name = f"[{e['company']}](https://chargemod.com/)"
+            elif "software incubator" in company_name.lower():
+                company_name = f"[{e['company']}](https://softincubator.com/career.html)"
+                
+            exp_details.append(f"- **{e['role']}** at {company_name} ({e['period']}){current_tag}:\n{desc_bullet}")
         
         return (
             f"Megha Raj has 3+ years of experience across Intelligent Automation (RPA), Data Analysis, and AI/Data Science:\n\n"
@@ -622,11 +648,11 @@ def get_chat_response(message: str) -> str:
     elif best_bucket == "companies":
         return (
             "Megha Raj V S has worked at the following companies:\n\n"
-            "1. **ChargeMOD**\n"
-            "   - **Role**: Data Scientist (May 2025 - Present)\n"
-            "   - **Role**: Data Science Intern (Mar 2024 - May 2024)\n"
-            "2. **Software Incubator Pvt. Ltd.**\n"
-            "   - **Role**: RPA Data Analyst (Jun 2022 - May 2024)"
+            "1. **[ChargeMOD](https://chargemod.com/)**\n"
+            "   - **Role/Position**: Data Scientist (May 2025 - Present)\n"
+            "   - **Role/Position**: Data Science Intern (Mar 2024 - May 2024)\n"
+            "2. **[Software Incubator Pvt. Ltd.](https://softincubator.com/career.html)**\n"
+            "   - **Role/Position**: RPA Data Analyst (Jun 2022 - May 2024)"
         )
 
     # Default fallback just in case

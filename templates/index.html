@@ -519,7 +519,13 @@
                 <div class="career-row__period">{{ exp.period }}</div>
                 <div class="career-row__body">
                   <div class="career-row__title">{{ exp.role }}</div>
-                  <div class="career-row__company">{{ exp.company }}</div>
+                  <div class="career-row__company">
+                    {% if exp.link %}
+                    <a href="{{ exp.link }}" target="_blank" style="color: var(--signal); text-decoration: none; border-bottom: 1px dotted var(--signal);">{{ exp.company }}</a>
+                    {% else %}
+                    {{ exp.company }}
+                    {% endif %}
+                  </div>
                   <ul class="timeline-list" style="margin-top: 8px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem;">
                     {% for desc in exp.description %}
                     <li style="margin-bottom: 6px;">{{ desc | safe }}</li>
@@ -551,7 +557,13 @@
                 <div class="career-row__period">{{ edu.period }}</div>
                 <div class="career-row__body">
                   <div class="career-row__title">{{ edu.degree }}</div>
-                  <div class="career-row__inst">{{ edu.institution }}</div>
+                  <div class="career-row__inst">
+                    {% if edu.link %}
+                    <a href="{{ edu.link }}" target="_blank" style="color: var(--signal); text-decoration: none; border-bottom: 1px dotted var(--signal);">{{ edu.institution }}</a>
+                    {% else %}
+                    {{ edu.institution }}
+                    {% endif %}
+                  </div>
                   {% if edu.specialization %}
                   <div class="career-row__sub" style="margin-top: 4px;">Specialization: {{ edu.specialization }}</div>
                   {% endif %}
@@ -593,7 +605,7 @@
                   <div class="career-row__title">Professional Certifications &amp; Bootcamps</div>
                   <ul class="timeline-list" style="margin-top: 6px; margin-left: 16px; color: var(--text-muted); font-size: 0.85rem;">
                     {% for cert in certifications %}
-                    <li>{{ cert }}</li>
+                    <li>{{ cert | safe }}</li>
                     {% endfor %}
                   </ul>
                 </div>

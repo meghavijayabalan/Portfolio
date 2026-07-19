@@ -505,7 +505,13 @@ const TimelineList = ({ items, testId }) => (
         <div className="when">{it.when}</div>
         <div className="role">{it.role}</div>
         <div className="org">
-          {it.org}
+          {it.link ? (
+            <a href={it.link} target="_blank" rel="noreferrer" style={{ color: "var(--neuron-1)", textDecoration: "underline" }}>
+              {it.org}
+            </a>
+          ) : (
+            it.org
+          )}
           {it.duration ? ` · ${it.duration}` : ""}
         </div>
         <ul className="single-bullet">
@@ -660,7 +666,13 @@ const Certificates = () => (
               className="text-sm"
               style={{ color: "var(--ink-muted)" }}
             >
-              {c.issuer}
+              {c.link ? (
+                <a href={c.link} target="_blank" rel="noreferrer" style={{ color: "var(--neuron-1)", textDecoration: "underline" }}>
+                  {c.issuer}
+                </a>
+              ) : (
+                c.issuer
+              )}
             </div>
             <div
               className="font-mono text-xs mt-3"

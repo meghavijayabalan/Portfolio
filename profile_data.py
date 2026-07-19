@@ -22,6 +22,7 @@ EXPERIENCE = [
     {
         "role": "Data Scientist",
         "company": "ChargeMOD",
+        "link": "https://chargemod.com/",
         "period": "May 2025 – Present",
         "duration": "1.3+ Years",
         "is_current": True,
@@ -34,6 +35,7 @@ EXPERIENCE = [
     {
         "role": "Data Science Intern",
         "company": "ChargeMOD",
+        "link": "https://chargemod.com/",
         "period": "Mar 2024 – May 2024",
         "duration": "3 Months",
         "is_current": False,
@@ -44,6 +46,7 @@ EXPERIENCE = [
     {
         "role": "RPA Data Analyst",
         "company": "Software Incubator Pvt. Ltd.",
+        "link": "https://softincubator.com/career.html",
         "period": "Jun 2022 – May 2024",
         "duration": "2 Years",
         "is_current": False,
@@ -288,6 +291,7 @@ EDUCATION = [
         "degree": "M.Tech in Computer Science",
         "specialization": "Digital Image Computing",
         "institution": "Kerala University, Karyavattom",
+        "link": "https://www.dcsku.org/",
         "period": "2023 – 2025",
         "cgpa": "8.98",
         "thesis": "SilentSpeak: Visual Speech Recognition using Deep Learning",
@@ -296,6 +300,7 @@ EDUCATION = [
         "degree": "B.Tech in Computer Science and Engineering",
         "specialization": None,
         "institution": "University College of Engineering, Karyavattom",
+        "link": "https://uck.ac.in/",
         "period": "2019 – 2023",
         "cgpa": "8.23",
         "project": "Fruit Picker Robot using ESP32 & IoT Automation",
@@ -304,6 +309,7 @@ EDUCATION = [
         "degree": "Higher Secondary (Plus Two)",
         "specialization": None,
         "institution": "Sree Vidhyadhiraja Vidhya Mandir, Vellayambalam",
+        "link": "https://svvmhssvellayambalam.com/",
         "period": "2017 – 2019",
         "percentage": "92%",
     },
@@ -311,6 +317,7 @@ EDUCATION = [
         "degree": "SSLC",
         "specialization": None,
         "institution": "Trinity English & Malayalam Medium School",
+        "link": "https://www.lfcsstate.com/contact-us/index.html",
         "period": "2016 – 2017",
         "percentage": "95%",
     }
@@ -335,6 +342,7 @@ PUBLICATIONS = [
 ]
 
 CERTIFICATIONS = [
+    "Java Full Stack Certification — <a href=\"https://faithinfotechacademy.com/\" target=\"_blank\" style=\"color: var(--signal); text-decoration: none; border-bottom: 1px dotted var(--signal);\">Faith InfoTech Academy</a>",
     "The Complete Python Bootcamp: From Zero to Hero (Udemy)",
     "Data Visualization with Power BI (Great Learning)",
     "Co-led an AI, Machine Learning & Robotics Bootcamp at Tella Academy for high school students",
