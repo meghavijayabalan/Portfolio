@@ -624,6 +624,37 @@ def get_chat_response(message: str) -> str:
 
     # 8. EDUCATION
     elif best_bucket == "education":
+        # Check if they asked for a specific degree/level
+        if any(kw in message_lc for kw in ["mtech", "m.tech", "masters", "post graduation", "postgraduate"]):
+            edu = next((e for e in profile_data.EDUCATION if "m.tech" in e["degree"].lower()), None)
+            if edu:
+                inst_link = f"[{edu['institution']}]({edu['link']})" if edu.get("link") else edu["institution"]
+                return (
+                    f"Megha Raj completed her **{edu['degree']}** (Specialization: **{edu['specialization']}**) at "
+                    f"**{inst_link}** ({edu['period']}).\n\n"
+                    f"- **Thesis**: {edu['thesis']}"
+                )
+        elif any(kw in message_lc for kw in ["btech", "b.tech", "bachelors", "graduation", "undergraduate"]):
+            edu = next((e for e in profile_data.EDUCATION if "b.tech" in e["degree"].lower()), None)
+            if edu:
+                inst_link = f"[{edu['institution']}]({edu['link']})" if edu.get("link") else edu["institution"]
+                return (
+                    f"Megha Raj completed her **{edu['degree']}** at "
+                    f"**{inst_link}** ({edu['period']}).\n\n"
+                    f"- **Graduation Project**: {edu['project']}"
+                )
+        elif any(kw in message_lc for kw in ["higher secondary", "plus two", "12th", "+2"]):
+            edu = next((e for e in profile_data.EDUCATION if "higher secondary" in e["degree"].lower()), None)
+            if edu:
+                inst_link = f"[{edu['institution']}]({edu['link']})" if edu.get("link") else edu["institution"]
+                return f"Megha Raj completed her **{edu['degree']}** at **{inst_link}** ({edu['period']})."
+        elif any(kw in message_lc for kw in ["sslc", "10th", "school"]):
+            edu = next((e for e in profile_data.EDUCATION if "sslc" in e["degree"].lower()), None)
+            if edu:
+                inst_link = f"[{edu['institution']}]({edu['link']})" if edu.get("link") else edu["institution"]
+                return f"Megha Raj completed her **{edu['degree']}** at **{inst_link}** ({edu['period']})."
+
+        # Otherwise, fall back to listing all education details
         edu_details = []
         for edu in profile_data.EDUCATION:
             thesis_or_project = ""
@@ -632,9 +663,10 @@ def get_chat_response(message: str) -> str:
             elif "project" in edu:
                 thesis_or_project = f"\n  * Project: {edu['project']}"
                 
+            inst_link = f"[{edu['institution']}]({edu['link']})" if edu.get("link") else edu["institution"]
             edu_details.append(
                 f"- **{edu['degree']}**\n"
-                f"  {edu['institution']} ({edu['period']}){thesis_or_project}"
+                f"  {inst_link} ({edu['period']}){thesis_or_project}"
             )
         return "Megha Raj's educational background includes:\n\n" + "\n\n".join(edu_details)
 
