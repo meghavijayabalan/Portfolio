@@ -196,7 +196,10 @@ def generate_general_graph():
     return f"data:image/svg+xml;base64,{base64_str}"
 
 # Helper regex for additional on-topic checks
-ON_TOPIC_ADDITIONAL = re.compile(r"\b(you|your|she|her|megha|megharaj|megha\s+raj)\b", re.IGNORECASE)
+ON_TOPIC_ADDITIONAL = re.compile(
+    r"\b(you|your|she|her|megha|megharaj|megha\s+raj|notice|salary|ctc|lpa|package|relocat|join|joining|why|reason|switch|choose|chose)\b", 
+    re.IGNORECASE
+)
 
 TECH_DESCRIPTIONS = {
     "machine learning": "Machine learning is a branch of artificial intelligence focused on building systems that learn from data, identify patterns, and make decisions with minimal human intervention. It encompasses supervised, unsupervised, and reinforcement learning paradigms.",
@@ -359,6 +362,65 @@ def get_chat_response(message: str) -> str:
             "Megha Raj V S worked at **[Software Incubator Pvt. Ltd.](https://softincubator.com/career.html)** in the following role:\n\n"
             "- **RPA Data Analyst** (Jun 2022 - May 2024):\n"
             "  * Automated document extraction and data processing workflows using JavaScript, Puppeteer, and Kofax; built browser automation pipelines for structured web scraping and data indexing into MySQL databases."
+        )
+
+    # notice period checks
+    if "notice" in message_lc:
+        if any(kw in message_lc for kw in ["how many days", "duration", "how long", "how much", "days", "month", "period"]):
+            return "Megha Raj's notice period is **30 days (1 month)**."
+        return "No, currently Megha is **not on a notice period** (she is working at ChargeMOD)."
+
+    # immediate joining check
+    if any(kw in message_lc for kw in ["join immediately", "immediate join", "join tomorrow", "join asap", "how soon can you join", "earliest start"]):
+        return (
+            "Currently, Megha is not on a notice period. However, she is open to discussions and will negotiate an early release with her current employer if needed, so that she can **join immediately** if approved."
+        )
+
+    # expected salary check
+    if any(kw in message_lc for kw in ["expected salary", "salary expectation", "ctc expectation", "expected ctc", "salary requirements", "salary expectations"]):
+        return "Megha Raj's expected salary is **10 LPA to 12 LPA**."
+    elif any(kw in message_lc for kw in ["salary", "ctc", "expectation", "package", "compensation"]) and any(kw in message_lc for kw in ["expect", "expected", "want", "require", "demand", "ask"]):
+        return "Megha Raj's expected salary is **10 LPA to 12 LPA**."
+
+    # relocation check
+    if "relocat" in message_lc or "open to move" in message_lc or "willing to move" in message_lc:
+        return (
+            "Yes, Megha is **completely open to relocation**.\n\n"
+            "**Why Relocate?** She believes that professional and personal growth thrives when stepping outside your comfort zone. Relocating represents a powerful opportunity to immerse herself in new environments, collaborate with diverse talent directly at on-site engineering hubs, and bring her machine learning and AI automation expertise to wherever the company's innovation centers are located."
+        )
+
+    # career transitions / choices checks:
+    # why switch from rpa to data science
+    if "rpa" in message_lc and ("data science" in message_lc or "datascience" in message_lc) and ("why" in message_lc or "reason" in message_lc or "switch" in message_lc or "transition" in message_lc):
+        return (
+            "**Why switch from RPA to Data Science?**\n\n"
+            "Megha transitioned from Robotic Process Automation (RPA) to Data Science because while RPA is excellent for automating rule-based, repetitive workflows, she wanted to build cognitive systems that can think, learn, and make decisions on their own.\n\n"
+            "During her tenure as an RPA Data Analyst at Software Incubator Pvt. Ltd., she saw firsthand that the true potential of automation lies in integrating ML, NLP, and Computer Vision to handle unstructured datasets. Transitioning to Data Science empowered her to build complex reasoning architectures (like LLM agents and serverless ETL data pipelines) that generate insights and automate intelligence."
+        )
+
+    # why choose mtech
+    if "mtech" in message_lc or "m.tech" in message_lc or "master" in message_lc:
+        if "why" in message_lc or "reason" in message_lc or "choose" in message_lc or "chose" in message_lc or "pursue" in message_lc:
+            return (
+                "**Why pursue an M.Tech?**\n\n"
+                "Megha chose to pursue her M.Tech in Computer Science (specializing in Digital Image Computing) to build a rigorous theoretical and research-driven foundation in advanced AI fields like Computer Vision, Deep Learning, and Pattern Recognition.\n\n"
+                "Her master's studies provided the structural framework to conduct deep research (such as her visual speech recognition thesis, SilentSpeak, which achieved a 2.95% Character Error Rate using 3D-CNNs and BiLSTMs), bridging the gap between standard engineering tasks and state-of-the-art machine learning implementations."
+            )
+
+    # why choose data science
+    if ("data science" in message_lc or "datascience" in message_lc) and ("why" in message_lc or "reason" in message_lc or "choose" in message_lc or "chose" in message_lc):
+        return (
+            "**Why choose Data Science?**\n\n"
+            "Megha chose Data Science because it sits at the perfect intersection of mathematics, programming, and real-world business optimization.\n\n"
+            "She is driven by the challenge of turning messy, unstructured datasets into predictive models and intelligent systems that yield measurable impact (such as cutting cloud query costs by 95% or implementing surge-pricing models that raise revenue by 10%). Data Science allows her to build cognitive systems that solve safety-critical, high-throughput problems."
+        )
+
+    # why choose chargemod
+    if "chargemod" in message_lc and ("why" in message_lc or "reason" in message_lc or "choose" in message_lc or "chose" in message_lc or "join" in message_lc):
+        return (
+            "**Why choose ChargeMOD?**\n\n"
+            "Megha chose ChargeMOD because the electric vehicle (EV) charging sector is a fast-growing, data-rich, and safety-critical green-tech industry. She wanted to apply her skills where they would directly support sustainable infrastructure and face real-world engineering challenges.\n\n"
+            "At ChargeMOD, the massive volume of real-time transactions and log events across 6,000+ chargers provided the perfect high-throughput environment to build production-grade data pipelines, LLM support tools, and peak-demand ML forecasting. It allowed her to grow from a junior engineer to an autonomous Data Scientist leading production AI deployments."
         )
 
     if not is_on_topic(message):

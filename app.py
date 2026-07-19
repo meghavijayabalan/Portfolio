@@ -51,6 +51,33 @@ def api_chat():
         return jsonify({"response": "I didn't receive any message. Please say something!"}), 400
         
     response_text = chatbot.get_chat_response(message)
+    
+    # Save chat history to chat_history.json file
+    try:
+        import datetime
+        chat_log = {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "user_message": message,
+            "bot_response": response_text,
+            "ip": request.remote_addr
+        }
+        history_file = os.path.join(os.path.dirname(__file__), "chat_history.json")
+        history = []
+        if os.path.exists(history_file):
+            try:
+                with open(history_file, "r", encoding="utf-8") as f:
+                    history = json.load(f)
+            except Exception:
+                pass
+        history.append(chat_log)
+        # Keep last 1000 logs to avoid unbounded file growth
+        if len(history) > 1000:
+            history = history[-1000:]
+        with open(history_file, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"Failed to log chat history: {e}")
+        
     return jsonify({"response": response_text})
 
 @app.route("/api/contact", methods=["POST"])
